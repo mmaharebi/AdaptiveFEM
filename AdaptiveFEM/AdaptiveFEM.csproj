@@ -16,6 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="alglibnet2" Version="0.0.0" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Images\align-center.png" />
     <Resource Include="Images\move_down.png" />
     <Resource Include="Images\move_left.png" />
