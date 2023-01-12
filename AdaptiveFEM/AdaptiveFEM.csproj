@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\align-center.png" />
+    <None Remove="Images\move_down.png" />
+    <None Remove="Images\move_left.png" />
+    <None Remove="Images\move_right.png" />
+    <None Remove="Images\move_up.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\align-center.png" />
+    <Resource Include="Images\move_down.png" />
+    <Resource Include="Images\move_left.png" />
+    <Resource Include="Images\move_right.png" />
+    <Resource Include="Images\move_up.png" />
+  </ItemGroup>
+
+</Project>

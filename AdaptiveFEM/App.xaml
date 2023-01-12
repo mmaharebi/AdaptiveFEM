@@ -1,0 +1,171 @@
+﻿<Application x:Class="AdaptiveFEM.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:AdaptiveFEM">
+    <Application.Resources>
+        <!--#region General styles-->
+        <Style TargetType="Button">
+            <Setter Property="Padding"
+                    Value="5 2" />
+        </Style>
+
+        <Style TargetType="TextBlock">
+            <Setter Property="Padding"
+                    Value="5 2" />
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Padding"
+                    Value="2" />
+        </Style>
+        <!--#endregion-->
+
+        <!--#region Headings-->
+        <Style x:Key="Heading1"
+               TargetType="TextBlock">
+            <Setter Property="FontSize"
+                    Value="24" />
+        </Style>
+
+        <Style x:Key="Heading2"
+               TargetType="TextBlock">
+            <Setter Property="FontSize"
+                    Value="22" />
+        </Style>
+
+        <Style x:Key="Heading3"
+               TargetType="TextBlock">
+            <Setter Property="FontSize"
+                    Value="16" />
+        </Style>
+
+        <Style x:Key="Heading4"
+               TargetType="TextBlock">
+            <Setter Property="FontSize"
+                    Value="14" />
+        </Style>
+
+        <Style x:Key="Heading5"
+               TargetType="TextBlock">
+            <Setter Property="FontSize"
+                    Value="10" />
+        </Style>
+
+        <Style x:Key="Heading6"
+               TargetType="TextBlock">
+            <Setter Property="FontSize"
+                    Value="8" />
+        </Style>
+        <!--#endregion-->
+
+        <!--#region Special Styles-->
+
+        <!--#region Header TextBlock-->
+        <Style TargetType="TextBlock"
+               x:Key="Header">
+            <Setter Property="FontSize"
+                    Value="20" />
+            <Setter Property="FontWeight"
+                    Value="Bold" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Center" />
+        </Style>
+        <!--#endregion-->
+
+        <!--#region Basic TextBlock-->
+        <Style TargetType="TextBlock"
+               x:Key="Basic">
+
+        </Style>
+        <!--#endregion-->
+
+        <!--#region InputLabel TextBlock-->
+        <Style TargetType="TextBlock"
+               x:Key="InputLabel">
+            <Setter Property="Padding"
+                    Value="0 0 0 2" />
+        </Style>
+        <!--#endregion-->
+
+        <!--#region Move Button-->
+        <Style TargetType="{x:Type Button}"
+               x:Key="MoveButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Image Source="/Images/move.png"
+                               Width="24"
+                               Height="24" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Width"
+                    Value="24" />
+            <Setter Property="Height"
+                    Value="24" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Right" />
+            <Setter Property="VerticalAlignment"
+                    Value="Top" />
+            <Setter Property="Margin"
+                    Value="0 5 5 0" />
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver"
+                         Value="False">
+                    <Setter Property="Opacity"
+                            Value="0.5" />
+                </Trigger>
+                <Trigger Property="IsMouseOver"
+                         Value="True">
+                    <Setter Property="Opacity"
+                            Value="1" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!--#endregion-->
+
+        <!--#region View Button-->
+        <Style TargetType="{x:Type Button}"
+               x:Key="ViewButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Image Source="/Images/view.png"
+                               Width="24"
+                               Height="24" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Width"
+                    Value="24" />
+            <Setter Property="Height"
+                    Value="24" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Right" />
+            <Setter Property="VerticalAlignment"
+                    Value="Top" />
+            <Setter Property="Margin"
+                    Value="0 5 5 0" />
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver"
+                         Value="False">
+                    <Setter Property="Opacity"
+                            Value="0.5" />
+                </Trigger>
+                <Trigger Property="IsMouseOver"
+                         Value="True">
+                    <Setter Property="Opacity"
+                            Value="1" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!--#endregion-->
+
+
+        <!--#endregion-->
+    </Application.Resources>
+</Application>
