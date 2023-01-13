@@ -23,6 +23,12 @@
                 <Behaviors:InvokeCommandAction Command="{Binding ViewSizeChange}"
                                                CommandParameter="{Binding ElementName=Root_Grid}" />
             </Behaviors:EventTrigger>
+
+            <Behaviors:EventTrigger EventName="MouseMove">
+                <Behaviors:InvokeCommandAction Command="{Binding UpdateMousePosition}"
+                                               CommandParameter="{Binding ElementName=Root_Grid}" />
+            </Behaviors:EventTrigger>
+
         </Behaviors:Interaction.Triggers>
         <ItemsControl Grid.Row="0"
                       ItemsSource="{Binding Geometries}">
@@ -30,6 +36,11 @@
                 <ItemsPanelTemplate>
                     <Canvas Name="Geometry_Canvas"
                             ClipToBounds="True">
+                        <Canvas.LayoutTransform>
+                            <ScaleTransform ScaleX="{Binding ZoomFactor}"
+                                            ScaleY="{Binding ZoomFactor}" />
+                        </Canvas.LayoutTransform>
+                        
                         <Behaviors:Interaction.Triggers>
                             <Behaviors:KeyTrigger Key="Left">
                                 <Behaviors:InvokeCommandAction Command="{Binding KeyboardTranslate}"
@@ -51,13 +62,33 @@
                                                                CommandParameter="Down" />
                             </Behaviors:KeyTrigger>
 
+                            <Behaviors:KeyTrigger Key="Z"
+                                                  Modifiers="Shift">
+                                <Behaviors:InvokeCommandAction Command="{Binding Zoom}"
+                                                               CommandParameter="ZoomIn" />
+                            </Behaviors:KeyTrigger>
+
+                            <Behaviors:KeyTrigger Key="Z"
+                                                  Modifiers="Ctrl">
+                                <Behaviors:InvokeCommandAction Command="{Binding Zoom}"
+                                                               CommandParameter="ZoomOut" />
+                            </Behaviors:KeyTrigger>
+
+                            <Behaviors:KeyTrigger Key="Z">
+                                <Behaviors:InvokeCommandAction Command="{Binding Zoom}"
+                                                               CommandParameter="Reset" />
+                            </Behaviors:KeyTrigger>
+
                         </Behaviors:Interaction.Triggers>
                     </Canvas>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
-        <Label Grid.Row="1"
-               HorizontalAlignment="Right"
-               Content="{Binding MousePosition}" />
+        <Border Grid.Row="1"
+                BorderThickness="0,0.5,0,0"
+                BorderBrush="Black">
+            <Label MinHeight="20"
+                   Content="{Binding MousePosition}" />
+        </Border>
     </Grid>
 </UserControl>
