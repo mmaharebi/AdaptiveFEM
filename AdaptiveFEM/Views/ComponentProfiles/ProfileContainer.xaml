@@ -1,0 +1,91 @@
+﻿<Window x:Class="AdaptiveFEM.Views.ComponentProfiles.ProfileContainer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AdaptiveFEM.Views.ComponentProfiles"
+        xmlns:compprofvm="clr-namespace:AdaptiveFEM.ViewModels.ComponentProfiles"
+        mc:Ignorable="d"
+        Title="{Binding WindowTitle}"
+        Height="350"
+        Width="500">
+    <Grid HorizontalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Grid.Resources>
+            <DataTemplate DataType="{x:Type compprofvm:CircleProfileVM}">
+                <local:CircleProfile />
+            </DataTemplate>
+            
+            <DataTemplate DataType="{x:Type compprofvm:EllipseProfileVM}">
+                <local:EllipseProfile />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type compprofvm:RectangleProfileVM}">
+                <local:RectangleProfile />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type compprofvm:SquareProfileVM}">
+                <local:SquareProfile />
+            </DataTemplate>
+
+        </Grid.Resources>
+
+        <ContentControl Grid.Row="0"
+                        Content="{Binding ComponentProfileVM}" />
+
+        <!--#region Boundary type and material settings-->
+        <Grid Grid.Row="1"
+              Margin="0 5 0 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"
+                                  SharedSizeGroup="FirstColumn" />
+                <ColumnDefinition Width="200"
+                                  SharedSizeGroup="SecondColumn" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Row="0"
+                        Grid.Column="0"
+                        Orientation="Vertical">
+                <TextBlock Text="Boundary type"
+                           Style="{StaticResource InputLabel}" />
+                <ComboBox ItemsSource="{Binding BoundaryTypes}"
+                          SelectedItem="{Binding SelectedBoundaryType}" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="0"
+                        Grid.Column="1"
+                        Margin="20 0 0 0"
+                        Orientation="Vertical">
+                <TextBlock Text="Material"
+                           Style="{StaticResource InputLabel}" />
+                <ComboBox ItemsSource="{Binding Materials}"
+                          SelectedItem="{Binding SelectedMaterial}" />
+            </StackPanel>
+        </Grid>
+        <!--#endregion-->
+
+        <!--#region Actions-->
+        <StackPanel Grid.Row="2"
+                    Panel.ZIndex="999"
+                    Margin="0 35 0 0"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <Button Content="OK"
+                    Command="{Binding MakeComponent}" />
+            <Button Content="Cancel"
+                    Margin="20 0 0 0"
+                    Command="{Binding CloseWindow}" />
+        </StackPanel>
+        <!--#endregion-->
+
+    </Grid>
+</Window>

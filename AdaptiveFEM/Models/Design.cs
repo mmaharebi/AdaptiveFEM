@@ -42,7 +42,7 @@ namespace AdaptiveFEM.Models
         private void OnComponentAdded(ComponentType componentType)
         {
             DesignChanged?.Invoke(this, new EventArgs());
-            _messageService.SendSuccessMessage($"{componentType} added.");
+            _messageService.SendSuccessMessage($"{componentType} added successfully.");
         }
 
         private void OnDesignReset()
