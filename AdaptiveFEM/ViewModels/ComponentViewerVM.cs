@@ -2,6 +2,7 @@
 using AdaptiveFEM.Commands.ComponentViewerCommands;
 using AdaptiveFEM.Models;
 using AdaptiveFEM.Stores;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
@@ -23,19 +24,6 @@ namespace AdaptiveFEM.ViewModels
                 OnPropertyChanged(nameof(Geometries));
             }
         }
-
-        private string _mousePosition;
-
-        public string MousePosition
-        {
-            get => _mousePosition;
-            set
-            {
-                _mousePosition = value;
-                OnPropertyChanged(nameof(MousePosition));
-            }
-        }
-
 
         private Point _coordinateCenter;
 
@@ -76,8 +64,6 @@ namespace AdaptiveFEM.ViewModels
 
         public ICommand ViewSizeChange { get; }
 
-        public ICommand UpdateMousePosition { get; }
-
         public ICommand KeyboardTranslate { get; }
 
         public ICommand Zoom { get; }
@@ -94,13 +80,11 @@ namespace AdaptiveFEM.ViewModels
             //
             _geometries = new ObservableCollection<Path>();
             _geometryElements = new GeometryElements();
-            _mousePosition = "0,0";
             ZoomFactor = 1.0;
 
             //
             ViewLoad = new ViewLoad(OnViewLoaded);
             ViewSizeChange = new ViewSizeChange(OnViewSizeChanged);
-            UpdateMousePosition = new UpdateMousePosition(OnMouseMove);
             KeyboardTranslate = new KeyboardTranslate(OnTranslate);
             Zoom = new Zoom(OnZoom, ResetZoom);
 
@@ -120,16 +104,6 @@ namespace AdaptiveFEM.ViewModels
         {
             ViewWidth = viewWidth;
             ViewHeight = viewHeight;
-        }
-
-        private void OnMouseMove(Point newMousePosition)
-        {
-            Point transformedMousePoint =
-                new Point(newMousePosition.X + CoordinateCenter.X,
-                -newMousePosition.Y - CoordinateCenter.Y);
-            MousePosition = transformedMousePoint.ToString();
-
-            OnPropertyChanged(nameof(MousePosition));
         }
 
         private void OnTranslate(double deltaX, double deltaY)
