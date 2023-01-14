@@ -18,9 +18,9 @@ namespace AdaptiveFEM.ViewModels
             }
         }
 
-        private ViewModelBase _componentViewerVM;
+        private ViewerVMBase _componentViewerVM;
 
-        public ViewModelBase ComponentViewerVM
+        public ViewerVMBase ComponentViewerVM
         {
             get => _componentViewerVM;
             set
@@ -29,6 +29,21 @@ namespace AdaptiveFEM.ViewModels
                 OnPropertyChanged(nameof(ComponentViewerVM));
             }
         }
+
+        private ViewerVMBase _meshViewerVM;
+
+        public ViewerVMBase MeshViewerVM
+        {
+            get => _meshViewerVM;
+            set
+            {
+                _meshViewerVM = value;
+                OnPropertyChanged(nameof(MeshViewerVM));
+            }
+        }
+
+
+
 
         private readonly Design _design;
 
@@ -43,6 +58,7 @@ namespace AdaptiveFEM.ViewModels
 
             _toolbarVM = new ToolbarVM(design, materialStore, messageService);
             _componentViewerVM = new ComponentViewerVM(design);
+            _meshViewerVM = new MeshViewerVM(design);
         }
     }
 }

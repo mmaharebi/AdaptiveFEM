@@ -1,165 +1,66 @@
-﻿using AdaptiveFEM.Commands;
-using AdaptiveFEM.Commands.ComponentViewerCommands;
-using AdaptiveFEM.Models;
-using AdaptiveFEM.Stores;
-using System;
+﻿using AdaptiveFEM.Models;
 using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace AdaptiveFEM.ViewModels
 {
-    public class ComponentViewerVM : ViewModelBase
+    public class ComponentViewerVM : ViewerVMBase
     {
         private ObservableCollection<Path> _geometries;
 
-        public ObservableCollection<Path> Geometries
+        public override ObservableCollection<Path> Items
         {
             get => _geometries;
             set
             {
                 _geometries = value;
-                OnPropertyChanged(nameof(Geometries));
+                OnPropertyChanged(nameof(Items));
             }
         }
 
-        private Point _coordinateCenter;
-
-        public Point CoordinateCenter
+        public ComponentViewerVM(Design design) : base(design)
         {
-            get => _coordinateCenter;
-            set
-            {
-                _coordinateCenter = value;
-                UpdateGeometries();
-            }
-        }
-
-        public Path CoordinateCircle => new Path
-        {
-            Fill = Brushes.Blue,
-            Data = new EllipseGeometry
-            {
-                Center = CoordinateCenter,
-                RadiusX = 2,
-                RadiusY = 2
-            }
-        };
-
-        public Path XAxis =>
-            _geometryElements.XAxis(CoordinateCenter, length: 15, headSize: 5);
-
-        public Path YAxis =>
-            _geometryElements.YAxis(CoordinateCenter, length: 15, headSize: 5);
-
-        public double ViewWidth { get; private set; }
-
-        public double ViewHeight { get; private set; }
-
-        public double ZoomFactor { get; private set; }
-
-        public ICommand ViewLoad { get; }
-
-        public ICommand ViewSizeChange { get; }
-
-        public ICommand KeyboardTranslate { get; }
-
-        public ICommand Zoom { get; }
-
-        private readonly Design _design;
-
-        private GeometryElements _geometryElements;
-
-        public ComponentViewerVM(Design design)
-        {
-            //
-            _design = design;
-
-            //
             _geometries = new ObservableCollection<Path>();
-            _geometryElements = new GeometryElements();
-            ZoomFactor = 1.0;
 
-            //
-            ViewLoad = new ViewLoad(OnViewLoaded);
-            ViewSizeChange = new ViewSizeChange(OnViewSizeChanged);
-            KeyboardTranslate = new KeyboardTranslate(OnTranslate);
-            Zoom = new Zoom(OnZoom, ResetZoom);
-
-            //
-            _design.DesignChanged += OnDesignChanged;
-        }
-
-        private void OnViewLoaded(double viewWidth, double viewHeight)
-        {
-            ViewWidth = viewWidth;
-            ViewHeight = viewHeight;
-
-            CoordinateCenter = new Point(ViewWidth / 2, ViewHeight / 2);
-        }
-
-        private void OnViewSizeChanged(double viewWidth, double viewHeight)
-        {
-            ViewWidth = viewWidth;
-            ViewHeight = viewHeight;
-        }
-
-        private void OnTranslate(double deltaX, double deltaY)
-        {
-            CoordinateCenter =
-                new Point(CoordinateCenter.X + deltaX,
-                CoordinateCenter.Y + deltaY);
+            design.DesignChanged += OnDesignChanged;
         }
 
         private void OnDesignChanged(object? sender, System.EventArgs e)
         {
-            UpdateGeometries();
+            UpdateItems();
         }
 
-        private void UpdateGeometries()
+        protected override void UpdateItems()
         {
-            Geometries.Clear();
+            Items.Clear();
 
             TransformGroup transformGroup = new TransformGroup();
             transformGroup.Children.Add(new ScaleTransform(1, -1));
             transformGroup.Children.Add(new TranslateTransform(CoordinateCenter.X,
                 CoordinateCenter.Y));
 
-            if (_design.Model.Domain != null)
+            if (design.Model.Domain != null)
             {
-                Geometry dg = _design.Model.Domain.Geometry;
-                Path dp = _geometryElements.DomainPath(dg);
+                Geometry dg = design.Model.Domain.Geometry;
+                Path dp = geometryElements.DomainPath(dg);
                 dp.RenderTransform = transformGroup;
-                Geometries.Add(dp);
+                Items.Add(dp);
             }
 
-            _design.Model.Regions.ForEach(r =>
+            design.Model.Regions.ForEach(r =>
             {
                 Geometry rg = r.Geometry;
-                Path rp = _geometryElements.RegionPath(rg);
+                Path rp = geometryElements.RegionPath(rg);
                 rp.RenderTransform = transformGroup;
-                Geometries.Add(rp);
+                Items.Add(rp);
             });
 
-            Geometries.Add(CoordinateCircle);
-            Geometries.Add(XAxis);
-            Geometries.Add(YAxis);
+            Items.Add(CoordinateCircle);
+            Items.Add(XAxis);
+            Items.Add(YAxis);
 
-            OnPropertyChanged(nameof(Geometries));
-        }
-
-        private void OnZoom(double scaleFactor)
-        {
-            ZoomFactor *= scaleFactor;
-            OnPropertyChanged(nameof(ZoomFactor));
-        }
-
-        private void ResetZoom()
-        {
-            ZoomFactor = 1;
-            OnPropertyChanged(nameof(ZoomFactor));
+            OnPropertyChanged(nameof(Items));
         }
     }
 }

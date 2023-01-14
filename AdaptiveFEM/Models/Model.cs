@@ -27,18 +27,18 @@ namespace AdaptiveFEM.Models
             _regions = new List<Region>();
         }
 
-        public bool AddDomain(Domain domain, Action<ComponentType> DomainAdded)
+        public bool AddDomain(Domain domain, Action<Component> DomainAdded)
         {
             if (Domain != null)
             {
                 return false;
             }
             Domain = domain;
-            DomainAdded(ComponentType.Domain);
+            DomainAdded(Domain);
             return true;
         }
 
-        public bool AddRegion(Region region, Action<ComponentType> RegionAdded)
+        public bool AddRegion(Region region, Action<Component> RegionAdded)
         {
             if (Domain == null)
             {
@@ -61,7 +61,7 @@ namespace AdaptiveFEM.Models
                     }
                 }
                 _regions.Add(region);
-                RegionAdded(ComponentType.Region);
+                RegionAdded(region);
                 return true;
             }
         }

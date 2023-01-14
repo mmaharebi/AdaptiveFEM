@@ -6,12 +6,58 @@ namespace AdaptiveFEM.Stores
 {
     public class GeometryElements
     {
+        #region Strokes
+        private SolidColorBrush _domainStroke;
+
+        private SolidColorBrush _regionStroke;
+
+        private SolidColorBrush _axisStroke;
+
+        private SolidColorBrush _meshLineStroke;
+        #endregion
+
+        #region StrokeThicknesses
+        private double _domainStrokeThickness;
+
+        private double _regionStrokeThickness;
+
+        private double _axisStrokeThickness;
+
+        private double _meshLineStrokeThickness;
+        #endregion
+
+        #region Fills
+        private SolidColorBrush _domainFill;
+        private SolidColorBrush _regionFill;
+        #endregion
+
+        public GeometryElements()
+        {
+            // Strokes
+            _domainStroke = Brushes.Red.Clone();
+            _regionStroke = Brushes.Black.Clone();
+            _axisStroke = Brushes.Blue.Clone();
+            _meshLineStroke = Brushes.Purple.Clone();
+
+            // StrokeThicknesses
+            _domainStrokeThickness = 1;
+            _regionStrokeThickness = 0.6;
+            _axisStrokeThickness = 0.5;
+            _meshLineStrokeThickness = 1;
+
+            // Fills
+            _domainFill =
+                new SolidColorBrush(Color.FromArgb(80, 80, 80, 80));
+            _regionFill =
+                new SolidColorBrush(Color.FromArgb(100, 100, 100, 100));
+        }
+
         public Path XAxis(Point StartPoint, double length, double headSize)
         {
             Path xAxis = new()
             {
-                Stroke = Brushes.Blue,
-                StrokeThickness = 1,
+                Stroke = _axisStroke,
+                StrokeThickness = _axisStrokeThickness,
                 Data = new PathGeometry
                 {
                     Figures = new PathFigureCollection
@@ -39,8 +85,8 @@ namespace AdaptiveFEM.Stores
         {
             Path yAxis = new Path
             {
-                Stroke = Brushes.Blue,
-                StrokeThickness = 1,
+                Stroke = _axisStroke,
+                StrokeThickness = _axisStrokeThickness,
                 Data = new PathGeometry
                 {
                     Figures = new PathFigureCollection
@@ -69,9 +115,9 @@ namespace AdaptiveFEM.Stores
             return new Path
             {
                 Data = geometry,
-                Stroke = Brushes.Red,
-                StrokeThickness = 1,
-                Fill = Brushes.Transparent
+                Stroke = _domainStroke,
+                StrokeThickness = _domainStrokeThickness,
+                Fill = _domainFill,
             };
         }
 
@@ -80,10 +126,29 @@ namespace AdaptiveFEM.Stores
             return new Path
             {
                 Data = geometry,
-                Stroke = Brushes.Black,
-                StrokeThickness = 0.6,
-                Fill = Brushes.Gray
+                Stroke = _regionStroke,
+                StrokeThickness = _regionStrokeThickness,
+                Fill = _regionFill,
             };
+        }
+
+        public Path MeshLinePath(Geometry geometry)
+        {
+            Path path = new Path();
+
+            if (geometry is not LineGeometry)
+                throw new System.ArgumentException("Not a LineGeometry");
+
+            if (geometry is LineGeometry line)
+                path = new Path
+                {
+                    Data = line,
+                    Stroke = _meshLineStroke,
+                    StrokeThickness = _meshLineStrokeThickness,
+                    Fill = Brushes.Transparent
+                };
+
+            return path;
         }
 
     }
