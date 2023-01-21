@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace AdaptiveFEM.Views
 {
     /// <summary>
-    /// Interaction logic for GeometryItemsViewer.xaml
+    /// Interaction logic for MeshViewer.xaml
     /// </summary>
-    public partial class GeometryItemsViewer : UserControl
+    public partial class MeshViewer : UserControl
     {
-        public GeometryItemsViewer()
+        public MeshViewer()
         {
             InitializeComponent();
         }

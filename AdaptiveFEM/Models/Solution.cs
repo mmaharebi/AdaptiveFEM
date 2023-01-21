@@ -1,16 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Windows.Media;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AdaptiveFEM.Models
 {
     public class Solution
     {
-        private List<LineGeometry> _uniformMesh;
+        private List<MeshLineComponent> _uniformMesh;
 
-        public List<LineGeometry> UniformMesh =>
-            new List<LineGeometry>(_uniformMesh);
+        public List<MeshLineComponent> MeshLines { get; private set; }
 
-        const uint uniformMeshSamples = 1000;
+        const uint uniformMeshSamples = 100;
 
         private readonly Design _design;
 
@@ -18,42 +17,56 @@ namespace AdaptiveFEM.Models
 
         public Solution(Design design)
         {
-            _uniformMesh = new List<LineGeometry>();
+            _uniformMesh = new List<MeshLineComponent>();
+            MeshLines = new List<MeshLineComponent>();
+
             _design = design;
             _mesh = new Mesh(_design.Model);
 
             //
-            _design.ComponentAdded += OnComponentAdded;
             _design.DesignReset += OnDesignReset;
         }
 
-
-        public List<LineGeometry> GenerateUniformMesh()
+        public void GenerateMesh()
         {
+            // First of all, uniform mesh should be generated.
+            GenerateUniformMesh();
+
+            // Warning: this line is written to test uniform mesh
+            MeshLines = _uniformMesh;
+        }
+
+        private void GenerateUniformMesh()
+        {
+            ResetMesh();
+
             if (_design.Model.Domain == null)
-                throw new System.MissingMemberException(nameof(Model.Domain));
+                throw new MissingMemberException(nameof(Model.Domain));
 
-            _uniformMesh.InsertRange(0,
-                _mesh.UniformMeshLines(_design.Model.Domain.Geometry,
-                uniformMeshSamples));
-
-            _design.Model.Regions.ForEach(r =>
+            for (int i = 0; i < uniformMeshSamples; i++)
             {
-                _uniformMesh.InsertRange(_uniformMesh.Count,
-                    _mesh.UniformMeshLines(r.Geometry, uniformMeshSamples));
-            });
+                _uniformMesh.Add(
+                    new MeshLineComponent(_mesh
+                    .UniformMeshLines(_design
+                    .Model.Domain.Geometry.Clone(), uniformMeshSamples)[i]));
+            }
 
-            return _uniformMesh;
+            for (int i = 0; i < _design.Model.Regions.Count; i++)
+                for (int j = 0; j < uniformMeshSamples; j++)
+                    _uniformMesh.Add(
+                        new MeshLineComponent(_mesh
+                        .UniformMeshLines(_design
+                        .Model.Regions[i].Geometry.Clone(), uniformMeshSamples)[j]));
         }
 
-        private void OnComponentAdded(object? sender, Component e)
-        {
-            _uniformMesh.InsertRange(_uniformMesh.Count,
-                _mesh.UniformMeshLines(e.Geometry, uniformMeshSamples));
-        }
         private void OnDesignReset(object? sender, System.EventArgs e)
         {
-            _uniformMesh.Clear();
+            ResetMesh();
+        }
+
+        private void ResetMesh()
+        {
+            MeshLines = new List<MeshLineComponent>();
         }
     }
 }

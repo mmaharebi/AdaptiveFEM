@@ -1,57 +1,40 @@
-﻿using AdaptiveFEM.Models;
+﻿using AdaptiveFEM.Commands.ViewerCommands.MeshViewerCommands;
+using AdaptiveFEM.Models;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace AdaptiveFEM.ViewModels
 {
     public class MeshViewerVM : ViewerVMBase
     {
-        private ObservableCollection<Path> _meshLines;
+        public override ObservableCollection<Component> Items { get; set; }
 
-        public override ObservableCollection<Path> Items
-        {
-            get => _meshLines;
-            set
-            {
-                _meshLines = value;
-                OnPropertyChanged(nameof(Items));
-            }
-        }
+        public ICommand UpdateMeshItems { get; }
 
         public MeshViewerVM(Design design) : base(design)
         {
-            _meshLines = new ObservableCollection<Path>();
+            Items = new ObservableCollection<Component>();
 
-            design.DesignChanged += OnDesignChanged;
+            UpdateMeshItems = new UpdateMeshItems(GetMeshLines);
         }
 
-        private void OnDesignChanged(object? sender, System.EventArgs e)
+        private void GetMeshLines()
         {
-            UpdateItems();
-        }
+            int NOcoordinateItems = 3;
 
-        protected override void UpdateItems()
-        {
-            Items.Clear();
+            TransformGroup transform = new TransformGroup();
+            transform.Children.Add(new ScaleTransform(1, -1));
+            transform.Children
+                .Add(new TranslateTransform(coordinateCenterPosition.X,
+                coordinateCenterPosition.Y));
 
-            TransformGroup transformGroup = new TransformGroup();
-            transformGroup.Children.Add(new ScaleTransform(1, -1));
-            transformGroup.Children.Add(new TranslateTransform(CoordinateCenter.X,
-                CoordinateCenter.Y));
-
-            design.Solution.UniformMesh.ForEach(um =>
+            for (int i = 0; i < design.Solution.MeshLines.Count; i++)
             {
-                Path p = geometryElements.MeshLinePath(um);
-                p.RenderTransform = transformGroup;
-                Items.Add(p);
-            });
-
-            Items.Add(CoordinateCircle);
-            Items.Add(XAxis);
-            Items.Add(YAxis);
-
-            OnPropertyChanged(nameof(Items));
+                design.Solution.MeshLines[i].Geometry.Transform = transform;
+                Items.Insert(Items.Count - NOcoordinateItems,
+                    design.Solution.MeshLines[i]);
+            }
         }
     }
 }

@@ -6,6 +6,13 @@ namespace AdaptiveFEM.Models
 {
     public class Region : Component
     {
+
+        public override Brush Stroke => Brushes.Transparent;
+
+        public override double StrokeThickness => 0;
+
+        public override Brush Fill => Brushes.LightSeaGreen;
+
         public Region(Geometry geometry,
             BoundaryType boundaryType,
             Material material,
@@ -16,10 +23,12 @@ namespace AdaptiveFEM.Models
         {
         }
 
+
         public bool Conflicts(Component component)
         {
             if (component is Domain domain)
             {
+                Geometry.Transform = domain.Geometry.Transform;
                 CombinedGeometry combinedGeometry =
                     new CombinedGeometry(GeometryCombineMode.Intersect,
                     Geometry, domain.Geometry);

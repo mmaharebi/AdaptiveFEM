@@ -18,17 +18,24 @@ namespace AdaptiveFEM.ViewModels
             }
         }
 
-        private readonly Design _design;
+        private ViewModelBase _tabMeshVM;
 
-        private readonly MessageService _messageService;
+        public ViewModelBase TabMeshVM
+        {
+            get => _tabMeshVM;
+            set
+            {
+                _tabMeshVM = value;
+                OnPropertyChanged(nameof(TabMeshVM));
+            }
+        }
 
         public ToolbarVM(Design design,
             MaterialStore materialStore,
             MessageService messageService)
         {
-            _design = design;
-            _messageService = messageService;
             _tabNewVM = new TabNewVM(design, messageService, materialStore);
+            _tabMeshVM = new TabMeshVM(design);
         }
     }
 }

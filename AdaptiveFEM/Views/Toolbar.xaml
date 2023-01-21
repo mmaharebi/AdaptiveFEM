@@ -12,6 +12,9 @@
             <TabItem Header="New">
                 <local:TabNew DataContext="{Binding TabNewVM}" />
             </TabItem>
+            <TabItem Header="Mesh">
+                <local:TabMesh DataContext="{Binding TabMeshVM}" />
+            </TabItem>
         </TabControl>            
     </Grid>
 </UserControl>

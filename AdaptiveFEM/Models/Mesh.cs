@@ -1,4 +1,5 @@
 ﻿using NumSharp;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
@@ -16,32 +17,33 @@ namespace AdaptiveFEM.Models
 
         public List<LineGeometry> UniformMeshLines(Geometry geometry, uint samples)
         {
-            List<LineGeometry> lines = new List<LineGeometry>();
+            List<LineGeometry> lineGeometries = new List<LineGeometry>();
 
-            var phi = np.arange(0, 2 * np.pi, 2 * np.pi / samples);
-
+            #region Ellipse sampling
             // Parametrization: a cos(phi) i + b sin(phi) j
             if (geometry is EllipseGeometry ellipse)
             {
                 double a = ellipse.RadiusX;
                 double b = ellipse.RadiusY;
+                var phi = np.arange(0, 2 * np.pi, 2 * np.pi / samples);
 
-
-                for (int i = 0; i < np.size(phi) - 1; i++)
-                    lines.Add(new LineGeometry
+                for (int i = 0; i < samples - 1; i++)
+                    lineGeometries.Add(new LineGeometry
                     {
-                        StartPoint = new Point(a * np.cos(phi[i]), b * np.sin(phi[i])),
-                        EndPoint = new Point(a * np.cos(phi[i + 1]), b * np.sin(phi[i + 1]))
+                        StartPoint = new Point(ellipse.Center.X + a * np.cos(phi[i]), ellipse.Center.Y + b * np.sin(phi[i])),
+                        EndPoint = new Point(ellipse.Center.X + a * np.cos(phi[i + 1]), ellipse.Center.Y + b * np.sin(phi[i + 1]))
                     });
 
                 // Last to first
-                lines.Add(new LineGeometry
+                lineGeometries.Add(new LineGeometry
                 {
-                    StartPoint = new Point(a * np.cos(phi[-1]), b * np.sin(phi[-1])),
-                    EndPoint = new Point(a * np.cos(phi[0]), b * np.sin(phi[0]))
+                    StartPoint = new Point(ellipse.Center.X + a * np.cos(phi[-1]), ellipse.Center.Y + b * np.sin(phi[-1])),
+                    EndPoint = new Point(ellipse.Center.X + a * np.cos(phi[0]), ellipse.Center.Y + b * np.sin(phi[0]))
                 });
             }
+            #endregion
 
+            #region Rectangle sampling
             // Parametrization: sample-length traversal:
             // Sarting from top-left corner and making lines for each
             // sample-length forward and in cw direction
@@ -55,65 +57,51 @@ namespace AdaptiveFEM.Models
                 Point bottomRight = rectangle.Rect.BottomRight;
                 Point bottomLeft = rectangle.Rect.BottomLeft;
 
-                // Differential length of sample
-                double ds = 2 * (w + h) / samples;
+                int wSamples;
+                int hSamples;
+                double dw;
+                double dh;
 
-                for (int i = 0; i < samples; i++)
+                wSamples = Convert.ToInt32(w / (w + h) * samples / 2);
+                hSamples = Convert.ToInt32(h / (w + h) * samples / 2);
+
+                dw = w / wSamples;
+                dh = h / hSamples;
+
+                // Top and bottom sides
+                for (int i = 0; i < wSamples; i++)
                 {
-                    double s = ds * i;
-                    // Top line
-                    if (s + ds < w)
-                        lines.Add(new LineGeometry
-                        {
-                            StartPoint = topLeft + new Vector(s, 0),
-                            EndPoint = topLeft + new Vector(s + ds, 0),
-                        });
-                    // Top-Right corner
-                    if (s < w && s + ds >= w)
-                        lines.Add(new LineGeometry
-                        {
-                            StartPoint = topLeft + new Vector(s, 0),
-                            EndPoint = topRight + new Vector(0, s + ds - w),
-                        });
-                    // Right-line
-                    if (s > w && s + ds < w + h)
-                        lines.Add(new LineGeometry
-                        {
-                            StartPoint = topRight + new Vector(0, s - w),
-                            EndPoint = topRight + new Vector(0, s + ds - w),
-                        });
-                    // Bottom-Right corner
-                    if (s < w + h && s + ds >= w + h)
-                        lines.Add(new LineGeometry
-                        {
-                            StartPoint = topRight + new Vector(0, s - w),
-                            EndPoint = bottomRight - new Vector(s + ds - w - h, 0),
-                        });
-                    // Bottom line
-                    if (s > w + h && s + ds < 2 * w + h)
-                        lines.Add(new LineGeometry
-                        {
-                            StartPoint = bottomRight - new Vector(s - w - h, 0),
-                            EndPoint = bottomRight - new Vector(s + ds - w - h, 0),
-                        });
-                    // Bottom-Left corner
-                    if (s < 2*w + h && s + ds >= 2 * w + h)
-                        lines.Add(new LineGeometry
-                        {
-                            StartPoint = bottomRight - new Vector(s - w - h, 0),
-                            EndPoint = bottomLeft - new Vector(0, s + ds - 2 * w - h),
-                        });
-                    // Left line
-                    if (s > 2 * w + h)
-                        lines.Add(new LineGeometry
-                        {
-                            StartPoint = bottomLeft - new Vector(0, s - 2 * w - h),
-                            EndPoint = bottomLeft - new Vector(0, s + ds - 2 * w - h),
-                        });
+                    lineGeometries.Add(new LineGeometry
+                    {
+                        StartPoint = topLeft + new Vector(dw * i, 0),
+                        EndPoint = topLeft + new Vector(dw * (i + 1), 0)
+                    });
+                    lineGeometries.Add(new LineGeometry
+                    {
+                        StartPoint = bottomRight - new Vector(dw * i, 0),
+                        EndPoint = bottomRight - new Vector(dw * (i + 1), 0)
+                    });
                 }
-            }
 
-            return lines;
+                // Right and left sides
+                for (int i = 0; i < hSamples; i++)
+                {
+                    lineGeometries.Add(new LineGeometry
+                    {
+                        StartPoint = topRight + new Vector(0, dh * i),
+                        EndPoint = topRight + new Vector(0, dh * (i + 1))
+                    });
+                    lineGeometries.Add(new LineGeometry
+                    {
+                        StartPoint = bottomLeft - new Vector(0, dh * i),
+                        EndPoint = bottomLeft - new Vector(0, dh * (i + 1))
+                    });
+                }
+
+            }
+            #endregion
+
+            return lineGeometries;
         }
     }
 }

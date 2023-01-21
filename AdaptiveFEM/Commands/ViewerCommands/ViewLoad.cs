@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace AdaptiveFEM.Commands.ComponentViewerCommands
+namespace AdaptiveFEM.Commands.ViewerCommands
 {
     public class ViewLoad : CommandBase
     {

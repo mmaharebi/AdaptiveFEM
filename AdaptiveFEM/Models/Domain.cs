@@ -6,6 +6,12 @@ namespace AdaptiveFEM.Models
 {
     public class Domain : Component
     {
+        public override Brush Stroke => Brushes.Red;
+
+        public override double StrokeThickness => 1;
+
+        public override Brush Fill => Brushes.White;
+
         public Domain(Geometry geometry,
             BoundaryType boundaryType,
             Material material,
@@ -14,5 +20,6 @@ namespace AdaptiveFEM.Models
                 material,
                 messageService)
         { }
+
     }
 }

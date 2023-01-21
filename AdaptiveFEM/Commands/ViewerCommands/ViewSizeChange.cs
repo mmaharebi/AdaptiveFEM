@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System;
 
-namespace AdaptiveFEM.Commands.ComponentViewerCommands
+namespace AdaptiveFEM.Commands.ViewerCommands
 {
     public class ViewSizeChange : CommandBase
     {

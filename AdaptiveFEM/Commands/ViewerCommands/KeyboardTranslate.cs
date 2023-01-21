@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AdaptiveFEM.Commands.ComponentViewerCommands
+namespace AdaptiveFEM.Commands.ViewerCommands
 {
     public class KeyboardTranslate : CommandBase
     {

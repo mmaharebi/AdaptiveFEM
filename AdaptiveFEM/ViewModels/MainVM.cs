@@ -18,9 +18,9 @@ namespace AdaptiveFEM.ViewModels
             }
         }
 
-        private ViewerVMBase _componentViewerVM;
+        private ComponentViewerVM _componentViewerVM;
 
-        public ViewerVMBase ComponentViewerVM
+        public ComponentViewerVM ComponentViewerVM
         {
             get => _componentViewerVM;
             set
@@ -30,9 +30,9 @@ namespace AdaptiveFEM.ViewModels
             }
         }
 
-        private ViewerVMBase _meshViewerVM;
+        private MeshViewerVM _meshViewerVM;
 
-        public ViewerVMBase MeshViewerVM
+        public MeshViewerVM MeshViewerVM
         {
             get => _meshViewerVM;
             set

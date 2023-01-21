@@ -17,16 +17,15 @@
             <TabControl DockPanel.Dock="Bottom">
                 <TabItem Header="Design">
                     <Border BorderThickness="0.1"
-                            BorderBrush="DarkBlue"
-                            >
-                        <views:GeometryItemsViewer DataContext="{Binding ComponentViewerVM}" />
+                            BorderBrush="DarkBlue">
+                        <views:ComponentViewer DataContext="{Binding ComponentViewerVM}" />
                     </Border>
                 </TabItem>
 
                 <TabItem Header="Mesh">
                     <Border BorderThickness="0.1"
                             BorderBrush="DarkBlue">
-                        <views:GeometryItemsViewer DataContext="{Binding MeshViewerVM}" />
+                        <views:MeshViewer DataContext="{Binding MeshViewerVM}" />
                     </Border>
                 </TabItem>
 

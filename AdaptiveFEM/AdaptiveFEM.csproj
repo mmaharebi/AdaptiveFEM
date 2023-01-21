@@ -13,6 +13,7 @@
     <None Remove="Images\move_left.png" />
     <None Remove="Images\move_right.png" />
     <None Remove="Images\move_up.png" />
+    <None Remove="Images\update.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +28,7 @@
     <Resource Include="Images\move_left.png" />
     <Resource Include="Images\move_right.png" />
     <Resource Include="Images\move_up.png" />
+    <Resource Include="Images\update.png" />
   </ItemGroup>
 
 </Project>

@@ -41,15 +41,13 @@ namespace AdaptiveFEM.Stores
 
             // StrokeThicknesses
             _domainStrokeThickness = 1;
-            _regionStrokeThickness = 0.6;
+            _regionStrokeThickness = 1;
             _axisStrokeThickness = 0.5;
             _meshLineStrokeThickness = 1;
 
             // Fills
-            _domainFill =
-                new SolidColorBrush(Color.FromArgb(80, 80, 80, 80));
-            _regionFill =
-                new SolidColorBrush(Color.FromArgb(100, 100, 100, 100));
+            _domainFill = Brushes.LightSeaGreen;
+            _regionFill = Brushes.LightGray;
         }
 
         public Path XAxis(Point StartPoint, double length, double headSize)
@@ -68,9 +66,9 @@ namespace AdaptiveFEM.Stores
                             Segments = new PathSegmentCollection
                             {
                                 new LineSegment { Point = StartPoint + new Vector(length, 0) },
-                                new LineSegment { Point = StartPoint + new Vector(length, -headSize/2) },
+                                new LineSegment { Point = StartPoint + new Vector(length, -headSize/4) },
                                 new LineSegment { Point = StartPoint + new Vector(length + headSize, 0) },
-                                new LineSegment { Point = StartPoint + new Vector(length, headSize/2) },
+                                new LineSegment { Point = StartPoint + new Vector(length, headSize/4) },
                                 new LineSegment { Point = StartPoint + new Vector(length, 0) }
                             }
                         }
@@ -97,9 +95,9 @@ namespace AdaptiveFEM.Stores
                             Segments = new PathSegmentCollection
                             {
                                 new LineSegment{ Point = StartPoint + new Vector(0, -length) },
-                                new LineSegment{ Point = StartPoint + new Vector(-headSize/2, -length) },
+                                new LineSegment{ Point = StartPoint + new Vector(-headSize/4, -length) },
                                 new LineSegment{ Point = StartPoint + new Vector(0, -length-headSize) },
-                                new LineSegment{ Point = StartPoint + new Vector(headSize/2, -length) },
+                                new LineSegment{ Point = StartPoint + new Vector(headSize/4, -length) },
                                 new LineSegment{ Point = StartPoint + new Vector(0, -length) }
                             }
                         }
@@ -132,21 +130,17 @@ namespace AdaptiveFEM.Stores
             };
         }
 
-        public Path MeshLinePath(Geometry geometry)
+        public Path MeshLinePath(LineGeometry geometry)
         {
             Path path = new Path();
 
-            if (geometry is not LineGeometry)
-                throw new System.ArgumentException("Not a LineGeometry");
-
-            if (geometry is LineGeometry line)
-                path = new Path
-                {
-                    Data = line,
-                    Stroke = _meshLineStroke,
-                    StrokeThickness = _meshLineStrokeThickness,
-                    Fill = Brushes.Transparent
-                };
+            path = new Path
+            {
+                Data = geometry,
+                Stroke = _meshLineStroke,
+                StrokeThickness = _meshLineStrokeThickness,
+                Fill = Brushes.Transparent
+            };
 
             return path;
         }
