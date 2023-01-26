@@ -25,7 +25,7 @@
                 <TabItem Header="Mesh">
                     <Border BorderThickness="0.1"
                             BorderBrush="DarkBlue">
-                        <views:MeshViewer DataContext="{Binding MeshViewerVM}" />
+                        <views:Mesh DataContext="{Binding MeshVM}" />
                     </Border>
                 </TabItem>
 

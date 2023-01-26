@@ -30,12 +30,25 @@ namespace AdaptiveFEM.ViewModels
             }
         }
 
+        private ViewModelBase _tabSolutionVM;
+
+        public ViewModelBase TabSolutionVM
+        {
+            get => _tabSolutionVM;
+            set
+            {
+                _tabSolutionVM = value;
+                OnPropertyChanged(nameof(TabSolutionVM));
+            }
+        }
+
         public ToolbarVM(Design design,
             MaterialStore materialStore,
             MessageService messageService)
         {
             _tabNewVM = new TabNewVM(design, messageService, materialStore);
-            _tabMeshVM = new TabMeshVM(design);
+            _tabMeshVM = new TabMeshVM();
+            _tabSolutionVM = new TabSolutionVM(design);
         }
     }
 }

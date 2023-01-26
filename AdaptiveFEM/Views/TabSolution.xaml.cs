@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace AdaptiveFEM.Views
 {
     /// <summary>
-    /// Interaction logic for MeshViewer.xaml
+    /// Interaction logic for TabSolution.xaml
     /// </summary>
-    public partial class MeshViewer : UserControl
+    public partial class TabSolution : UserControl
     {
-        public MeshViewer()
+        public TabSolution()
         {
             InitializeComponent();
         }
