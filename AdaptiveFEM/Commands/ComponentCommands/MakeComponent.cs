@@ -42,6 +42,7 @@ namespace AdaptiveFEM.Commands.ComponentCommands
                     component =
                         new Domain(_windowVM.ComponentProfileVM.Geometry,
                         _windowVM.SelectedBoundaryType,
+                        _windowVM.Phi,
                         _windowVM.SelectedMaterial,
                         _messageService);
                     if (_design.AddDomain((Domain)component))
@@ -51,6 +52,7 @@ namespace AdaptiveFEM.Commands.ComponentCommands
                     component =
                         new Region(_windowVM.ComponentProfileVM.Geometry,
                         _windowVM.SelectedBoundaryType,
+                        _windowVM.Phi,
                         _windowVM.SelectedMaterial,
                         _messageService);
                     if (_design.AddRegion((Region)component))

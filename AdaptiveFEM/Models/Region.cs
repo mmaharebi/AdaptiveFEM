@@ -7,17 +7,19 @@ namespace AdaptiveFEM.Models
     public class Region : Component
     {
 
-        public override Brush Stroke => Brushes.Transparent;
+        public override Brush Stroke => Brushes.Black;
 
-        public override double StrokeThickness => 0;
+        public override double StrokeThickness => 1;
 
         public override Brush Fill => Brushes.LightSeaGreen;
 
         public Region(Geometry geometry,
             BoundaryType boundaryType,
+            double phi,
             Material material,
             MessageService messageService) : base(geometry,
                 boundaryType,
+                phi,
                 material,
                 messageService)
         {

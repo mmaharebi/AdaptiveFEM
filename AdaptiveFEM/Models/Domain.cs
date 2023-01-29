@@ -14,9 +14,11 @@ namespace AdaptiveFEM.Models
 
         public Domain(Geometry geometry,
             BoundaryType boundaryType,
+            double phi,
             Material material,
             MessageService messageService) : base(geometry,
                 boundaryType,
+                phi,
                 material,
                 messageService)
         { }

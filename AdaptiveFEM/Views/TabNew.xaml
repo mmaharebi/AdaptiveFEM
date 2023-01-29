@@ -85,6 +85,7 @@
                             Margin="0 5 0 0">
 
                     <Button Content="Circle"
+                            IsEnabled="False"
                             Margin="5 0 0 0"
                             Command="{Binding OpenComponentProfile}">
                         <Button.CommandParameter>
@@ -97,6 +98,7 @@
 
                     <Button Content="Ellipse"
                             Margin="5 0 0 0"
+                            IsEnabled="False"
                             Command="{Binding OpenComponentProfile}">
                         <Button.CommandParameter>
                             <MultiBinding Converter="{StaticResource ShapeComponentTypeConverter}">

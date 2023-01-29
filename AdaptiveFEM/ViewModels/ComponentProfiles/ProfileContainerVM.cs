@@ -31,6 +31,8 @@ namespace AdaptiveFEM.ViewModels.ComponentProfiles
 
         public ShapeType ShapeType => ComponentProfileVM.ShapeType;
 
+        public bool IsNotDomain { get; }
+
         public string WindowTitle => $"{ComponentType}: {ShapeType}";
 
         #region Boundary type
@@ -45,6 +47,19 @@ namespace AdaptiveFEM.ViewModels.ComponentProfiles
                 OnPropertyChanged(nameof(SelectedBoundaryType));
             }
         }
+
+        private double _phi;
+
+        public double Phi
+        {
+            get => _phi;
+            set
+            {
+                _phi = value;
+                OnPropertyChanged(nameof(Phi));
+            }
+        }
+
 
         public List<BoundaryType> BoundaryTypes
         {
@@ -83,7 +98,6 @@ namespace AdaptiveFEM.ViewModels.ComponentProfiles
 
         public event EventHandler? CloseThis;
 
-        private readonly Design _design;
         private readonly MaterialStore _materialStore;
 
         public ProfileContainerVM(Design design,
@@ -93,7 +107,7 @@ namespace AdaptiveFEM.ViewModels.ComponentProfiles
             ComponentType componentType)
         {
             // Assign fields
-            _design = design;
+            _phi = 0;
             _materialStore = materialStore;
             _componentProfileVM = componentProfileVM;
             ComponentType = componentType;
@@ -106,6 +120,14 @@ namespace AdaptiveFEM.ViewModels.ComponentProfiles
             // Instantiate commands
             MakeComponent = new MakeComponent(design, messageService, this, OnCloseThis);
             CloseWindow = new CloseWindow(OnCloseThis);
+
+            // Boundary type combo-box and Phi text-box visibility
+            IsNotDomain = !(componentType == ComponentType.Domain);
+            if (!IsNotDomain)
+            {
+                SelectedBoundaryType = BoundaryType.PerfectElectricConductor;
+                Phi = 0;
+            }
         }
 
         private void OnCloseThis()

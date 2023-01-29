@@ -10,30 +10,33 @@ namespace AdaptiveFEM.MagicalSolver
 {
     public class PointStar
     {
-        private Point myPoint;
-        public Point MyPoint
+        private Point _point;
+        public Point Point
         {
-            get { return myPoint; }
-            set { myPoint = value; }
+            get { return _point; }
+            set { _point = value; }
         }
         public double Phi { get; set; }
-        public List<int> neighborTriangles = new List<int>();
+        public List<int> NeighborTriangles = new List<int>();
         public bool IsBoundary { get; set; }
         public bool IsFixedCharge { get; set; }
         public bool IsDielectricBoundary { get; set; }
         public bool IsOuter { get; set; }
-        public int indexInList { get; set; }
-        public int whichBoundary { get; set; }
-        public PointStar(Point myPoint, List<int> neighborTriangles)
+        public int IndexInList { get; set; }
+        public int WhichBoundary { get; set; }
+
+        public PointStar() { }
+
+        public PointStar(Point point, List<int> neighborTriangles)
         {
-            this.myPoint = myPoint;
-            this.neighborTriangles = neighborTriangles;
+            _point = point;
+            NeighborTriangles = neighborTriangles;
         }
 
         public PointStar(Point myPoint, List<int> neighborTriangles, bool isBoundary)
         {
-            this.myPoint = myPoint;
-            this.neighborTriangles = neighborTriangles;
+            _point = myPoint;
+            NeighborTriangles = neighborTriangles;
             IsBoundary = isBoundary;
         }
     }

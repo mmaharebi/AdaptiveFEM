@@ -7,6 +7,8 @@ namespace AdaptiveFEM.Models
 {
     public abstract class Component
     {
+        public int LayerIndex { get; }
+
         public string Name { get; set; }
 
         public Geometry Geometry { get; }
@@ -19,6 +21,8 @@ namespace AdaptiveFEM.Models
 
         public BoundaryType BoundaryType { get; }
 
+        public double Phi { get; }
+
         public Material Material { get; }
 
         private static int _meshLineCounter;
@@ -28,12 +32,15 @@ namespace AdaptiveFEM.Models
         // For domain and region
         protected Component(Geometry geometry,
             BoundaryType boundaryType,
+            double phi,
             Material material,
             MessageService messageService)
         {
-            Name = $"Component-{ComponentIdGenerator.NewId()}";
-            this.Geometry = geometry;
+            LayerIndex = ComponentLayerIndexGenerator.NewLayerIndex();
+            Name = $"Component-{LayerIndex}";
+            Geometry = geometry;
             BoundaryType = boundaryType;
+            Phi = phi;
             Material = material;
             this.messageService = messageService;
         }
@@ -42,9 +49,11 @@ namespace AdaptiveFEM.Models
         protected Component(string name,
             Geometry geometry)
         {
-            Name = name;
+            LayerIndex = -1;
+            Name = $"Coordinate-{name}";
             Geometry = geometry;
             BoundaryType = BoundaryType.Dielectric;
+            Phi = double.NaN;
             Material = new Air();
             messageService = new MessageService();
         }
@@ -52,9 +61,11 @@ namespace AdaptiveFEM.Models
         // For Mesh-lines
         protected Component(Geometry geometry)
         {
+            LayerIndex = -2;
             Name = $"Mesh-line-{_meshLineCounter++}";
             Geometry = geometry;
             BoundaryType = BoundaryType.Dielectric;
+            Phi = double.NaN;
             Material = new Air();
             messageService = new MessageService();
         }

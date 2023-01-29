@@ -32,11 +32,11 @@ namespace AdaptiveFEM.ViewModels
         #endregion
 
         #region Coordinate element names
-        protected string centerCircleName = "CenterCircle";
+        protected string centerCircleName = "Coordinate-CenterCircle";
 
-        protected string xAxisName = "XAxis";
+        protected string xAxisName = "Coordinate-XAxis";
 
-        protected string yAxisName = "YAxis";
+        protected string yAxisName = "Coordinate-YAxis";
 
         protected Point coordinateCenterPosition = new Point(0, 0);
         #endregion

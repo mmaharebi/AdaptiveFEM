@@ -10,40 +10,40 @@ namespace AdaptiveFEM.MagicalSolver
         /// ///////////////////
         /// Number -100 is used for NULL neighbors when the triangle is on the outer boundary. 
         /// </summary>
-        public float epsilonR { get; set; }
-        public float muR { get; set; }
+        public float EpsilonR { get; set; }
+        public float MuR { get; set; }
         public bool IsPEC { get; set; }
         public bool IsPMC { get; set; }
-        public int indexInList { get; set; }
-        public Triangle(List<int> nodes, List<int> neighbors, float E_R, float M_R, bool isPEC, bool isPMC, int index)
+        public int IndexInList { get; set; }
+        public Triangle(List<int> nodes, List<int> neighbors, float epsilonR, float muR, bool isPEC, bool isPMC, int indexInList)
         {
             Nodes = nodes;
             Neighbors = neighbors;
-            this.epsilonR = E_R;
-            this.muR = M_R;
-            this.IsPEC = isPEC;
-            this.IsPMC = isPMC;
-            this.indexInList = index;
+            EpsilonR = epsilonR;
+            MuR = muR;
+            IsPEC = isPEC;
+            IsPMC = isPMC;
+            IndexInList = indexInList;
         }
         public Triangle()
         {
             Nodes = new List<int>();
             Neighbors = new List<int>();
-            epsilonR = 1;
-            muR = 1;
+            EpsilonR = 1;
+            MuR = 1;
             IsPEC = false;
             IsPMC = false;
-            indexInList = -1;
+            IndexInList = -1;
         }
         public Triangle(Triangle trng)
         {
             Nodes = new List<int>(trng.Nodes);
             Neighbors = new List<int>(trng.Neighbors);
-            epsilonR = trng.epsilonR;
-            muR = trng.muR;
+            EpsilonR = trng.EpsilonR;
+            MuR = trng.MuR;
             IsPEC = trng.IsPEC;
             IsPMC = trng.IsPMC;
-            indexInList = trng.indexInList;
+            IndexInList = trng.IndexInList;
         }
     }
 }

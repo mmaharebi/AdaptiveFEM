@@ -37,10 +37,10 @@ namespace AdaptiveFEM.MagicalSolver
             var lenList = new List<double>();
             for (int i = 0; i < 3; i++)
             {
-                double X1 = PointStars[trng.Nodes[i]].MyPoint.X;
-                double X2 = PointStars[trng.Nodes[(i + 1) % 3]].MyPoint.X;
-                double Y1 = PointStars[trng.Nodes[i]].MyPoint.Y;
-                double Y2 = PointStars[trng.Nodes[(i + 1) % 3]].MyPoint.Y;
+                double X1 = PointStars[trng.Nodes[i]].Point.X;
+                double X2 = PointStars[trng.Nodes[(i + 1) % 3]].Point.X;
+                double Y1 = PointStars[trng.Nodes[i]].Point.Y;
+                double Y2 = PointStars[trng.Nodes[(i + 1) % 3]].Point.Y;
                 lenList.Add(Math.Sqrt(Math.Pow(X1 - X2, 2) + Math.Pow(Y1 - Y2, 2)));
             }
 
@@ -66,12 +66,12 @@ namespace AdaptiveFEM.MagicalSolver
         public double elementArea(int trngIndex)
         {
             Triangle trng = this.Triangles[trngIndex];
-            double X1 = PointStars[trng.Nodes[0]].MyPoint.X;
-            double X2 = PointStars[trng.Nodes[1]].MyPoint.X;
-            double X3 = PointStars[trng.Nodes[2]].MyPoint.X;
-            double Y1 = PointStars[trng.Nodes[0]].MyPoint.Y;
-            double Y2 = PointStars[trng.Nodes[1]].MyPoint.Y;
-            double Y3 = PointStars[trng.Nodes[2]].MyPoint.Y;
+            double X1 = PointStars[trng.Nodes[0]].Point.X;
+            double X2 = PointStars[trng.Nodes[1]].Point.X;
+            double X3 = PointStars[trng.Nodes[2]].Point.X;
+            double Y1 = PointStars[trng.Nodes[0]].Point.Y;
+            double Y2 = PointStars[trng.Nodes[1]].Point.Y;
+            double Y3 = PointStars[trng.Nodes[2]].Point.Y;
             double A = ((X1 * Y2 - X2 * Y1) + (X3 * Y1 - X1 * Y3) + (X2 * Y3 - X3 * Y2)) / 2;
             return A;
         }
@@ -83,14 +83,14 @@ namespace AdaptiveFEM.MagicalSolver
             Triangle trng = new Triangle();
             //////////////////////////////////
             // checking that the new node is in the meshing region
-            if ((newNode.MyPoint.X > this.PointStars[1].MyPoint.X) || (newNode.MyPoint.X < this.PointStars[0].MyPoint.X) ||
-                (newNode.MyPoint.Y > this.PointStars[2].MyPoint.Y) || (newNode.MyPoint.Y < this.PointStars[0].MyPoint.Y))
+            if ((newNode.Point.X > this.PointStars[1].Point.X) || (newNode.Point.X < this.PointStars[0].Point.X) ||
+                (newNode.Point.Y > this.PointStars[2].Point.Y) || (newNode.Point.Y < this.PointStars[0].Point.Y))
             {
-                trng.epsilonR = 1;
-                trng.indexInList = -100;
+                trng.EpsilonR = 1;
+                trng.IndexInList = -100;
                 trng.IsPEC = false;
                 trng.IsPMC = false;
-                trng.muR = 1;
+                trng.MuR = 1;
                 trng.Neighbors = new List<int>() { -1, -1, -1 };
                 trng.Nodes = new List<int>() { -1, -1, -1 };
                 return trng;
@@ -104,8 +104,8 @@ namespace AdaptiveFEM.MagicalSolver
                 double[,] node = new double[3, 2];
                 for (int i = 0; i < 3; ++i)
                 {
-                    node[i, 0] = this.PointStars[lastTriangle.Nodes[i]].MyPoint.X;
-                    node[i, 1] = this.PointStars[lastTriangle.Nodes[i]].MyPoint.Y;
+                    node[i, 0] = this.PointStars[lastTriangle.Nodes[i]].Point.X;
+                    node[i, 1] = this.PointStars[lastTriangle.Nodes[i]].Point.Y;
                 }
                 for (int j = 0; j < 3; ++j)
                 {
@@ -129,11 +129,11 @@ namespace AdaptiveFEM.MagicalSolver
                 double[] Orthogonal0 = new double[2] { -Vector01[1], Vector01[0] };
                 double[] Orthogonal1 = new double[2] { -Vector12[1], Vector12[0] };
                 double[] Orthogonal2 = new double[2] { -Vector20[1], Vector20[0] };
-                double[] middle2Node0 = new double[2] { newNode.MyPoint.X - middlePoints[0, 0], -newNode.MyPoint.Y + middlePoints[0, 1] };
+                double[] middle2Node0 = new double[2] { newNode.Point.X - middlePoints[0, 0], -newNode.Point.Y + middlePoints[0, 1] };
                 double NormMid0 = Math.Sqrt(middle2Node0[0] * middle2Node0[0] + middle2Node0[1] * middle2Node0[1]);
-                double[] middle2Node1 = new double[2] { newNode.MyPoint.X - middlePoints[1, 0], -newNode.MyPoint.Y + middlePoints[1, 1] };
+                double[] middle2Node1 = new double[2] { newNode.Point.X - middlePoints[1, 0], -newNode.Point.Y + middlePoints[1, 1] };
                 double NormMid1 = Math.Sqrt(middle2Node1[0] * middle2Node1[0] + middle2Node1[1] * middle2Node1[1]);
-                double[] middle2Node2 = new double[2] { newNode.MyPoint.X - middlePoints[2, 0], -newNode.MyPoint.Y + middlePoints[2, 1] };
+                double[] middle2Node2 = new double[2] { newNode.Point.X - middlePoints[2, 0], -newNode.Point.Y + middlePoints[2, 1] };
                 double NormMid2 = Math.Sqrt(middle2Node2[0] * middle2Node2[0] + middle2Node2[1] * middle2Node2[1]);
                 double[] Products = new double[3]
                 {
@@ -202,17 +202,17 @@ namespace AdaptiveFEM.MagicalSolver
                 else
                 {
                     double[] Vector21 = new double[2] {
-                    PointStars[p2].MyPoint.X - PointStars[p1].MyPoint.X,
-                    PointStars[p2].MyPoint.Y - PointStars[p1].MyPoint.Y };
+                    PointStars[p2].Point.X - PointStars[p1].Point.X,
+                    PointStars[p2].Point.Y - PointStars[p1].Point.Y };
                     double[] Vector31 = new double[2] {
-                    PointStars[p3].MyPoint.X - PointStars[p1].MyPoint.X,
-                    PointStars[p3].MyPoint.Y - PointStars[p1].MyPoint.Y };
+                    PointStars[p3].Point.X - PointStars[p1].Point.X,
+                    PointStars[p3].Point.Y - PointStars[p1].Point.Y };
                     double[] Vector24 = new double[2] {
-                    PointStars[p2].MyPoint.X - PointStars[p4].MyPoint.X,
-                    PointStars[p2].MyPoint.Y - PointStars[p4].MyPoint.Y };
+                    PointStars[p2].Point.X - PointStars[p4].Point.X,
+                    PointStars[p2].Point.Y - PointStars[p4].Point.Y };
                     double[] Vector34 = new double[2] {
-                    PointStars[p3].MyPoint.X - PointStars[p4].MyPoint.X,
-                    PointStars[p3].MyPoint.Y - PointStars[p4].MyPoint.Y };
+                    PointStars[p3].Point.X - PointStars[p4].Point.X,
+                    PointStars[p3].Point.Y - PointStars[p4].Point.Y };
                     double Norm21 = Math.Sqrt(Vector21[0] * Vector21[0] + Vector21[1] * Vector21[1]);
                     double Norm31 = Math.Sqrt(Vector31[0] * Vector31[0] + Vector31[1] * Vector31[1]);
                     double Norm24 = Math.Sqrt(Vector24[0] * Vector24[0] + Vector24[1] * Vector24[1]);
@@ -301,11 +301,11 @@ namespace AdaptiveFEM.MagicalSolver
             int[] neighbors = new int[2] { beta, delta };
             int[] triangles = new int[2] { triangleNum2, triangleNum };
             Triangle newTriangle1 = new Triangle(new List<int>() { p1, p2, p4 }, new List<int>() { beta, triangleNum2, alpha },
-                Triangles[triangleNum].epsilonR, Triangles[triangleNum].muR,
+                Triangles[triangleNum].EpsilonR, Triangles[triangleNum].MuR,
                 Triangles[triangleNum].IsPEC, Triangles[triangleNum].IsPMC,
                 triangleNum);
             Triangle newTriangle2 = new Triangle(new List<int>() { p4, p3, p1 }, new List<int>() { delta, triangleNum, gamma },
-                Triangles[triangleNum2].epsilonR, Triangles[triangleNum2].muR,
+                Triangles[triangleNum2].EpsilonR, Triangles[triangleNum2].MuR,
                 Triangles[triangleNum2].IsPEC, Triangles[triangleNum2].IsPMC,
                 triangleNum2);
             // Updating beta and delta neighbors. 
@@ -358,14 +358,14 @@ namespace AdaptiveFEM.MagicalSolver
                 }
             }
             // Updating p1,2,3,4 neighbors
-            PointStars[p1].neighborTriangles.Add(triangleNum2);
-            int index1 = PointStars[p2].neighborTriangles.FindIndex(0, PointStars[p2].neighborTriangles.Count,
+            PointStars[p1].NeighborTriangles.Add(triangleNum2);
+            int index1 = PointStars[p2].NeighborTriangles.FindIndex(0, PointStars[p2].NeighborTriangles.Count,
                 a => a.Equals(triangleNum2));
-            PointStars[p2].neighborTriangles.RemoveAt(index1);
-            int index2 = PointStars[p3].neighborTriangles.FindIndex(0, PointStars[p3].neighborTriangles.Count,
+            PointStars[p2].NeighborTriangles.RemoveAt(index1);
+            int index2 = PointStars[p3].NeighborTriangles.FindIndex(0, PointStars[p3].NeighborTriangles.Count,
                 a => a.Equals(triangleNum));
-            PointStars[p3].neighborTriangles.RemoveAt(index2);
-            PointStars[p4].neighborTriangles.Add(triangleNum);
+            PointStars[p3].NeighborTriangles.RemoveAt(index2);
+            PointStars[p4].NeighborTriangles.Add(triangleNum);
             // Updating triangles' list
             Triangles[triangleNum] = newTriangle1;
             Triangles[triangleNum2] = newTriangle2;
@@ -379,32 +379,32 @@ namespace AdaptiveFEM.MagicalSolver
             PointStar lastNode = this.PointStars[PointStars.Count - 1];
             // First step: Finding the triangle that the node is in it. 
             Triangle inTriangle = new Triangle(walkSearch(last, newNode));
-            int lastTriangle = inTriangle.indexInList;
+            int lastTriangle = inTriangle.IndexInList;
             //MessageBox.Show(lastTriangle.ToString());
             // Second step: Creating two new triangles 
             Triangle newTriangle1 = new Triangle();
             newTriangle1.Nodes = new List<int> { inTriangle.Nodes[0], inTriangle.Nodes[1], PointStars.Count };
-            newTriangle1.Neighbors = new List<int> { Triangles.Count + 1, inTriangle.indexInList, inTriangle.Neighbors[2] };
-            newTriangle1.indexInList = Triangles.Count;
-            newTriangle1.epsilonR = inTriangle.epsilonR;
-            newTriangle1.muR = inTriangle.muR;
+            newTriangle1.Neighbors = new List<int> { Triangles.Count + 1, inTriangle.IndexInList, inTriangle.Neighbors[2] };
+            newTriangle1.IndexInList = Triangles.Count;
+            newTriangle1.EpsilonR = inTriangle.EpsilonR;
+            newTriangle1.MuR = inTriangle.MuR;
             newTriangle1.IsPEC = inTriangle.IsPEC;
             newTriangle1.IsPMC = inTriangle.IsPMC;
 
             Triangle newTriangle2 = new Triangle();
             newTriangle2.Nodes = new List<int> { PointStars.Count, inTriangle.Nodes[1], inTriangle.Nodes[2] };
-            newTriangle2.Neighbors = new List<int> { inTriangle.Neighbors[0], inTriangle.indexInList, Triangles.Count };
-            newTriangle2.indexInList = Triangles.Count + 1;
-            newTriangle2.epsilonR = inTriangle.epsilonR;
-            newTriangle2.muR = inTriangle.muR;
+            newTriangle2.Neighbors = new List<int> { inTriangle.Neighbors[0], inTriangle.IndexInList, Triangles.Count };
+            newTriangle2.IndexInList = Triangles.Count + 1;
+            newTriangle2.EpsilonR = inTriangle.EpsilonR;
+            newTriangle2.MuR = inTriangle.MuR;
             newTriangle2.IsPEC = inTriangle.IsPEC;
             newTriangle2.IsPMC = inTriangle.IsPMC;
 
             int[] neighbors = new int[3] { inTriangle.Neighbors[0], inTriangle.Neighbors[1], inTriangle.Neighbors[2] };
 
             // Updating inTriangle neighbors.
-            Triangles[inTriangle.indexInList].Neighbors = new List<int>() { Triangles.Count + 1, inTriangle.Neighbors[1], Triangles.Count };
-            Triangles[inTriangle.indexInList].Nodes = new List<int> { inTriangle.Nodes[0], PointStars.Count, inTriangle.Nodes[2] };
+            Triangles[inTriangle.IndexInList].Neighbors = new List<int>() { Triangles.Count + 1, inTriangle.Neighbors[1], Triangles.Count };
+            Triangles[inTriangle.IndexInList].Nodes = new List<int> { inTriangle.Nodes[0], PointStars.Count, inTriangle.Nodes[2] };
 
             // Updating inTriangle neighbors' neighbors
             for (int j = 0; j < 3; ++j)
@@ -416,7 +416,7 @@ namespace AdaptiveFEM.MagicalSolver
                 }
                 else if (j == 1)
                 {
-                    newNeighbor = inTriangle.indexInList;
+                    newNeighbor = inTriangle.IndexInList;
                 }
                 else if (j == 2)
                 {
@@ -427,7 +427,7 @@ namespace AdaptiveFEM.MagicalSolver
                     for (int i = 0; i < 3; i++)
                     {
                         int neighbor = Triangles[neighbors[j]].Neighbors[i];
-                        if (neighbor == inTriangle.indexInList)
+                        if (neighbor == inTriangle.IndexInList)
                         {
                             if (i == 0)
                             {
@@ -452,17 +452,17 @@ namespace AdaptiveFEM.MagicalSolver
                 }
             }
             // Now, we should update newNode Neighbors
-            newNode.neighborTriangles = new List<int>() { lastTriangle, Triangles.Count, Triangles.Count + 1 };
-            newNode.indexInList = PointStars.Count;
+            newNode.NeighborTriangles = new List<int>() { lastTriangle, Triangles.Count, Triangles.Count + 1 };
+            newNode.IndexInList = PointStars.Count;
             //MessageBox.Show(inTriangle.Nodes[1].ToString());
             // Now, we should update node 0,1,2 Neighbors
-            PointStars[inTriangle.Nodes[0]].neighborTriangles.Add(Triangles.Count);
-            PointStars[inTriangle.Nodes[2]].neighborTriangles.Add(Triangles.Count + 1);
-            int index = PointStars[inTriangle.Nodes[1]].neighborTriangles.FindIndex(0,
-                PointStars[inTriangle.Nodes[1]].neighborTriangles.Count,
+            PointStars[inTriangle.Nodes[0]].NeighborTriangles.Add(Triangles.Count);
+            PointStars[inTriangle.Nodes[2]].NeighborTriangles.Add(Triangles.Count + 1);
+            int index = PointStars[inTriangle.Nodes[1]].NeighborTriangles.FindIndex(0,
+                PointStars[inTriangle.Nodes[1]].NeighborTriangles.Count,
                 a => a.Equals(lastTriangle));
-            PointStars[inTriangle.Nodes[1]].neighborTriangles[index] = Triangles.Count;
-            PointStars[inTriangle.Nodes[1]].neighborTriangles.Add(Triangles.Count + 1);
+            PointStars[inTriangle.Nodes[1]].NeighborTriangles[index] = Triangles.Count;
+            PointStars[inTriangle.Nodes[1]].NeighborTriangles.Add(Triangles.Count + 1);
             // Adding new elements to their lists
             PointStars.Add(newNode);
             Triangles.Add(newTriangle1);
@@ -474,7 +474,7 @@ namespace AdaptiveFEM.MagicalSolver
         /// and its neighbors and its neighbors' neighbors.
         /// in this function, neighbors of triangles and nodes will be updated.  
         /////////////////////////////////////
-        public void makeTriangle(PointStar newNode, int last)
+        public void MakeTriangle(PointStar newNode, int last)
         {
             int lastTriangle = addNode(newNode, last);
             List<int> doubtfulTriangles = new List<int>();
@@ -498,7 +498,7 @@ namespace AdaptiveFEM.MagicalSolver
                 {
                     bool check = (Triangles[doubtfulTriangles[k]].IsPEC == Triangles[Triangles[doubtfulTriangles[k]].Neighbors[doubtfulTrianglesNeighborNum[k]]].IsPEC);
                     //check = true;
-                    bool epsCheck = (Triangles[doubtfulTriangles[k]].epsilonR == Triangles[Triangles[doubtfulTriangles[k]].Neighbors[doubtfulTrianglesNeighborNum[k]]].epsilonR);
+                    bool epsCheck = (Triangles[doubtfulTriangles[k]].EpsilonR == Triangles[Triangles[doubtfulTriangles[k]].Neighbors[doubtfulTrianglesNeighborNum[k]]].EpsilonR);
                     if (DelaunayCheck(doubtfulTriangles[k], doubtfulTrianglesNeighborNum[k]) && check && epsCheck)
                     {
                         int neighb = Triangles[doubtfulTriangles[k]].Neighbors[doubtfulTrianglesNeighborNum[k]];
@@ -533,20 +533,20 @@ namespace AdaptiveFEM.MagicalSolver
                 {
                     //MessageBox.Show("trngIndex" + trngIndex.ToString());
                     Point newnode = new Point();
-                    newnode.X = (PointStars[Triangles[trngIndex].Nodes[0]].MyPoint.X +
-                        PointStars[Triangles[trngIndex].Nodes[1]].MyPoint.X +
-                        PointStars[Triangles[trngIndex].Nodes[2]].MyPoint.X) / 3;
-                    newnode.Y = (PointStars[Triangles[trngIndex].Nodes[0]].MyPoint.Y +
-                        PointStars[Triangles[trngIndex].Nodes[1]].MyPoint.Y +
-                        PointStars[Triangles[trngIndex].Nodes[2]].MyPoint.Y) / 3;
+                    newnode.X = (PointStars[Triangles[trngIndex].Nodes[0]].Point.X +
+                        PointStars[Triangles[trngIndex].Nodes[1]].Point.X +
+                        PointStars[Triangles[trngIndex].Nodes[2]].Point.X) / 3;
+                    newnode.Y = (PointStars[Triangles[trngIndex].Nodes[0]].Point.Y +
+                        PointStars[Triangles[trngIndex].Nodes[1]].Point.Y +
+                        PointStars[Triangles[trngIndex].Nodes[2]].Point.Y) / 3;
                     PointStar newNode = new PointStar(newnode, new List<int>());
                     newNode.IsBoundary = false;
-                    newNode.whichBoundary = -1;
+                    newNode.WhichBoundary = -1;
                     newNode.IsOuter = false;
                     newNode.Phi = (PointStars[Triangles[trngIndex].Nodes[0]].Phi +
                         PointStars[Triangles[trngIndex].Nodes[1]].Phi +
                         PointStars[Triangles[trngIndex].Nodes[2]].Phi) / 3;
-                    makeTriangle(newNode, trngIndex);
+                    MakeTriangle(newNode, trngIndex);
                 }
 
             }
@@ -575,20 +575,20 @@ namespace AdaptiveFEM.MagicalSolver
                 {
                     //MessageBox.Show("trngIndex" + trngIndex.ToString());
                     Point newnode = new Point();
-                    newnode.X = (PointStars[Triangles[trngIndex].Nodes[0]].MyPoint.X +
-                        PointStars[Triangles[trngIndex].Nodes[1]].MyPoint.X +
-                        PointStars[Triangles[trngIndex].Nodes[2]].MyPoint.X) / 3;
-                    newnode.Y = (PointStars[Triangles[trngIndex].Nodes[0]].MyPoint.Y +
-                        PointStars[Triangles[trngIndex].Nodes[1]].MyPoint.Y +
-                        PointStars[Triangles[trngIndex].Nodes[2]].MyPoint.Y) / 3;
+                    newnode.X = (PointStars[Triangles[trngIndex].Nodes[0]].Point.X +
+                        PointStars[Triangles[trngIndex].Nodes[1]].Point.X +
+                        PointStars[Triangles[trngIndex].Nodes[2]].Point.X) / 3;
+                    newnode.Y = (PointStars[Triangles[trngIndex].Nodes[0]].Point.Y +
+                        PointStars[Triangles[trngIndex].Nodes[1]].Point.Y +
+                        PointStars[Triangles[trngIndex].Nodes[2]].Point.Y) / 3;
                     PointStar newNode = new PointStar(newnode, new List<int>());
                     newNode.IsBoundary = false;
-                    newNode.whichBoundary = -1;
+                    newNode.WhichBoundary = -1;
                     newNode.IsOuter = false;
                     newNode.Phi = (PointStars[Triangles[trngIndex].Nodes[0]].Phi +
                         PointStars[Triangles[trngIndex].Nodes[1]].Phi +
                         PointStars[Triangles[trngIndex].Nodes[2]].Phi) / 3;
-                    makeTriangle(newNode, trngIndex);
+                    MakeTriangle(newNode, trngIndex);
                 }
 
             }
@@ -601,21 +601,21 @@ namespace AdaptiveFEM.MagicalSolver
         public List<double> elementCoeff_LAPLACE(int trngIndex)
         {
             Triangle trng = this.Triangles[trngIndex];
-            double X1 = PointStars[trng.Nodes[0]].MyPoint.X;
-            double X2 = PointStars[trng.Nodes[1]].MyPoint.X;
-            double X3 = PointStars[trng.Nodes[2]].MyPoint.X;
-            double Y1 = PointStars[trng.Nodes[0]].MyPoint.Y;
-            double Y2 = PointStars[trng.Nodes[1]].MyPoint.Y;
-            double Y3 = PointStars[trng.Nodes[2]].MyPoint.Y;
+            double X1 = PointStars[trng.Nodes[0]].Point.X;
+            double X2 = PointStars[trng.Nodes[1]].Point.X;
+            double X3 = PointStars[trng.Nodes[2]].Point.X;
+            double Y1 = PointStars[trng.Nodes[0]].Point.Y;
+            double Y2 = PointStars[trng.Nodes[1]].Point.Y;
+            double Y3 = PointStars[trng.Nodes[2]].Point.Y;
             double A = ((X1 * Y2 - X2 * Y1) + (X3 * Y1 - X1 * Y3) + (X2 * Y3 - X3 * Y2)) / 2;
             var elemC = new List<double>
             {
-                trng.epsilonR * ((Y2 - Y3) * (Y2 - Y3) + (X3 - X2) * (X3 - X2)) / (4 * A), // C11
-                trng.epsilonR * ((Y2 - Y3) * (Y3 - Y1) + (X3 - X2) * (X1 - X3)) / (4 * A), // C12
-                trng.epsilonR * ((Y2 - Y3) * (Y1 - Y2) + (X3 - X2) * (X2 - X1)) / (4 * A), // C13
-                trng.epsilonR * ((Y3 - Y1) * (Y3 - Y1) + (X1 - X3) * (X1 - X3)) / (4 * A), // C22
-                trng.epsilonR * ((Y3 - Y1) * (Y1 - Y2) + (X1 - X3) * (X2 - X1)) / (4 * A), // C23
-                trng.epsilonR * ((Y1 - Y2) * (Y1 - Y2) + (X2 - X1) * (X2 - X1)) / (4 * A)  // C33
+                trng.EpsilonR * ((Y2 - Y3) * (Y2 - Y3) + (X3 - X2) * (X3 - X2)) / (4 * A), // C11
+                trng.EpsilonR * ((Y2 - Y3) * (Y3 - Y1) + (X3 - X2) * (X1 - X3)) / (4 * A), // C12
+                trng.EpsilonR * ((Y2 - Y3) * (Y1 - Y2) + (X3 - X2) * (X2 - X1)) / (4 * A), // C13
+                trng.EpsilonR * ((Y3 - Y1) * (Y3 - Y1) + (X1 - X3) * (X1 - X3)) / (4 * A), // C22
+                trng.EpsilonR * ((Y3 - Y1) * (Y1 - Y2) + (X1 - X3) * (X2 - X1)) / (4 * A), // C23
+                trng.EpsilonR * ((Y1 - Y2) * (Y1 - Y2) + (X2 - X1) * (X2 - X1)) / (4 * A)  // C33
             };
             // $C^{(e)}_{ij}$ in this order: 11 12 13 22 23 33. $C^{(e)}_{ij} = C^{(e)}_{ji}$
             return elemC;
@@ -623,12 +623,12 @@ namespace AdaptiveFEM.MagicalSolver
         public List<double> elementCoeff_TM(int trngIndex)
         {
             Triangle trng = this.Triangles[trngIndex];
-            double X1 = PointStars[trng.Nodes[0]].MyPoint.X;
-            double X2 = PointStars[trng.Nodes[1]].MyPoint.X;
-            double X3 = PointStars[trng.Nodes[2]].MyPoint.X;
-            double Y1 = PointStars[trng.Nodes[0]].MyPoint.Y;
-            double Y2 = PointStars[trng.Nodes[1]].MyPoint.Y;
-            double Y3 = PointStars[trng.Nodes[2]].MyPoint.Y;
+            double X1 = PointStars[trng.Nodes[0]].Point.X;
+            double X2 = PointStars[trng.Nodes[1]].Point.X;
+            double X3 = PointStars[trng.Nodes[2]].Point.X;
+            double Y1 = PointStars[trng.Nodes[0]].Point.Y;
+            double Y2 = PointStars[trng.Nodes[1]].Point.Y;
+            double Y3 = PointStars[trng.Nodes[2]].Point.Y;
             double A = ((X1 * Y2 - X2 * Y1) + (X3 * Y1 - X1 * Y3) + (X2 * Y3 - X3 * Y2)) / 2;
             var elemC = new List<double>
             {
@@ -645,21 +645,21 @@ namespace AdaptiveFEM.MagicalSolver
         public List<double> elementCoeff_TE(int trngIndex)
         {
             Triangle trng = this.Triangles[trngIndex];
-            double X1 = PointStars[trng.Nodes[0]].MyPoint.X;
-            double X2 = PointStars[trng.Nodes[1]].MyPoint.X;
-            double X3 = PointStars[trng.Nodes[2]].MyPoint.X;
-            double Y1 = PointStars[trng.Nodes[0]].MyPoint.Y;
-            double Y2 = PointStars[trng.Nodes[1]].MyPoint.Y;
-            double Y3 = PointStars[trng.Nodes[2]].MyPoint.Y;
+            double X1 = PointStars[trng.Nodes[0]].Point.X;
+            double X2 = PointStars[trng.Nodes[1]].Point.X;
+            double X3 = PointStars[trng.Nodes[2]].Point.X;
+            double Y1 = PointStars[trng.Nodes[0]].Point.Y;
+            double Y2 = PointStars[trng.Nodes[1]].Point.Y;
+            double Y3 = PointStars[trng.Nodes[2]].Point.Y;
             double A = ((X1 * Y2 - X2 * Y1) + (X3 * Y1 - X1 * Y3) + (X2 * Y3 - X3 * Y2)) / 2;
             var elemC = new List<double>
             {
-                (1 / trng.epsilonR) * ((Y2 - Y3) * (Y2 - Y3) + (X3 - X2) * (X3 - X2)) / (4 * A), // C11
-                (1 / trng.epsilonR) * ((Y2 - Y3) * (Y3 - Y1) + (X3 - X2) * (X1 - X3)) / (4 * A), // C12
-                (1 / trng.epsilonR) * ((Y2 - Y3) * (Y1 - Y2) + (X3 - X2) * (X2 - X1)) / (4 * A), // C13
-                (1 / trng.epsilonR) * ((Y3 - Y1) * (Y3 - Y1) + (X1 - X3) * (X1 - X3)) / (4 * A), // C22
-                (1 / trng.epsilonR) * ((Y3 - Y1) * (Y1 - Y2) + (X1 - X3) * (X2 - X1)) / (4 * A), // C23
-                (1 / trng.epsilonR) * ((Y1 - Y2) * (Y1 - Y2) + (X2 - X1) * (X2 - X1)) / (4 * A)  // C33
+                (1 / trng.EpsilonR) * ((Y2 - Y3) * (Y2 - Y3) + (X3 - X2) * (X3 - X2)) / (4 * A), // C11
+                (1 / trng.EpsilonR) * ((Y2 - Y3) * (Y3 - Y1) + (X3 - X2) * (X1 - X3)) / (4 * A), // C12
+                (1 / trng.EpsilonR) * ((Y2 - Y3) * (Y1 - Y2) + (X3 - X2) * (X2 - X1)) / (4 * A), // C13
+                (1 / trng.EpsilonR) * ((Y3 - Y1) * (Y3 - Y1) + (X1 - X3) * (X1 - X3)) / (4 * A), // C22
+                (1 / trng.EpsilonR) * ((Y3 - Y1) * (Y1 - Y2) + (X1 - X3) * (X2 - X1)) / (4 * A), // C23
+                (1 / trng.EpsilonR) * ((Y1 - Y2) * (Y1 - Y2) + (X2 - X1) * (X2 - X1)) / (4 * A)  // C33
             };
             // $C^{(e)}_{ij}$ in this order: 11 12 13 22 23 33. $C^{(e)}_{ij} = C^{(e)}_{ji}$
             return elemC;
@@ -667,21 +667,21 @@ namespace AdaptiveFEM.MagicalSolver
         public List<double> elementCoeff_TE2(int trngIndex)
         {
             Triangle trng = this.Triangles[trngIndex];
-            double X1 = PointStars[trng.Nodes[0]].MyPoint.X;
-            double X2 = PointStars[trng.Nodes[1]].MyPoint.X;
-            double X3 = PointStars[trng.Nodes[2]].MyPoint.X;
-            double Y1 = PointStars[trng.Nodes[0]].MyPoint.Y;
-            double Y2 = PointStars[trng.Nodes[1]].MyPoint.Y;
-            double Y3 = PointStars[trng.Nodes[2]].MyPoint.Y;
+            double X1 = PointStars[trng.Nodes[0]].Point.X;
+            double X2 = PointStars[trng.Nodes[1]].Point.X;
+            double X3 = PointStars[trng.Nodes[2]].Point.X;
+            double Y1 = PointStars[trng.Nodes[0]].Point.Y;
+            double Y2 = PointStars[trng.Nodes[1]].Point.Y;
+            double Y3 = PointStars[trng.Nodes[2]].Point.Y;
             double A = ((X1 * Y2 - X2 * Y1) + (X3 * Y1 - X1 * Y3) + (X2 * Y3 - X3 * Y2)) / 2;
             var elemC = new List<double>
             {
-                (1 / trng.epsilonR / trng.epsilonR) * ((Y2 - Y3) * (Y2 - Y3) + (X3 - X2) * (X3 - X2)) / (4 * A), // C11
-                (1 / trng.epsilonR / trng.epsilonR) * ((Y2 - Y3) * (Y3 - Y1) + (X3 - X2) * (X1 - X3)) / (4 * A), // C12
-                (1 / trng.epsilonR / trng.epsilonR) * ((Y2 - Y3) * (Y1 - Y2) + (X3 - X2) * (X2 - X1)) / (4 * A), // C13
-                (1 / trng.epsilonR / trng.epsilonR) * ((Y3 - Y1) * (Y3 - Y1) + (X1 - X3) * (X1 - X3)) / (4 * A), // C22
-                (1 / trng.epsilonR / trng.epsilonR) * ((Y3 - Y1) * (Y1 - Y2) + (X1 - X3) * (X2 - X1)) / (4 * A), // C23
-                (1 / trng.epsilonR / trng.epsilonR) * ((Y1 - Y2) * (Y1 - Y2) + (X2 - X1) * (X2 - X1)) / (4 * A)  // C33
+                (1 / trng.EpsilonR / trng.EpsilonR) * ((Y2 - Y3) * (Y2 - Y3) + (X3 - X2) * (X3 - X2)) / (4 * A), // C11
+                (1 / trng.EpsilonR / trng.EpsilonR) * ((Y2 - Y3) * (Y3 - Y1) + (X3 - X2) * (X1 - X3)) / (4 * A), // C12
+                (1 / trng.EpsilonR / trng.EpsilonR) * ((Y2 - Y3) * (Y1 - Y2) + (X3 - X2) * (X2 - X1)) / (4 * A), // C13
+                (1 / trng.EpsilonR / trng.EpsilonR) * ((Y3 - Y1) * (Y3 - Y1) + (X1 - X3) * (X1 - X3)) / (4 * A), // C22
+                (1 / trng.EpsilonR / trng.EpsilonR) * ((Y3 - Y1) * (Y1 - Y2) + (X1 - X3) * (X2 - X1)) / (4 * A), // C23
+                (1 / trng.EpsilonR / trng.EpsilonR) * ((Y1 - Y2) * (Y1 - Y2) + (X2 - X1) * (X2 - X1)) / (4 * A)  // C33
             };
             // $C^{(e)}_{ij}$ in this order: 11 12 13 22 23 33. $C^{(e)}_{ij} = C^{(e)}_{ji}$
             return elemC;
@@ -699,7 +699,7 @@ namespace AdaptiveFEM.MagicalSolver
             if (I == J)
             {
                 // 1st, we should check $I == J$ case. 
-                foreach (int trngNum in node.neighborTriangles)
+                foreach (int trngNum in node.NeighborTriangles)
                 {
                     // For this case, for each triangle, we should find I-th node place in trng.Nodes
                     if (trngNum != -100)
@@ -736,7 +736,7 @@ namespace AdaptiveFEM.MagicalSolver
                 int trngNum1 = -100;
                 int trngNum2 = -100;
                 // if IsNeighbor == true, then there are two triangles containing both I ang J. 
-                foreach (int trngNum in node.neighborTriangles)
+                foreach (int trngNum in node.NeighborTriangles)
                 {
                     // For this case, for each triangle, we should find I-th node place in trng.Nodes
                     if (trngNum != -100)
@@ -858,7 +858,7 @@ namespace AdaptiveFEM.MagicalSolver
             if (I == J)
             {
                 // 1st, we should check $I == J$ case. 
-                foreach (int trngNum in node.neighborTriangles)
+                foreach (int trngNum in node.NeighborTriangles)
                 {
                     // For this case, for each triangle, we should find I-th node place in trng.Nodes
                     if (trngNum != -100)
@@ -895,7 +895,7 @@ namespace AdaptiveFEM.MagicalSolver
                 int trngNum1 = -100;
                 int trngNum2 = -100;
                 // if IsNeighbor == true, then there are two triangles containing both I ang J. 
-                foreach (int trngNum in node.neighborTriangles)
+                foreach (int trngNum in node.NeighborTriangles)
                 {
                     // For this case, for each triangle, we should find I-th node place in trng.Nodes
                     if (trngNum != -100)
@@ -1017,7 +1017,7 @@ namespace AdaptiveFEM.MagicalSolver
             if (I == J)
             {
                 // 1st, we should check $I == J$ case. 
-                foreach (int trngNum in node.neighborTriangles)
+                foreach (int trngNum in node.NeighborTriangles)
                 {
                     // For this case, for each triangle, we should find I-th node place in trng.Nodes
                     if (trngNum != -100)
@@ -1054,7 +1054,7 @@ namespace AdaptiveFEM.MagicalSolver
                 int trngNum1 = -100;
                 int trngNum2 = -100;
                 // if IsNeighbor == true, then there are two triangles containing both I ang J. 
-                foreach (int trngNum in node.neighborTriangles)
+                foreach (int trngNum in node.NeighborTriangles)
                 {
                     // For this case, for each triangle, we should find I-th node place in trng.Nodes
                     if (trngNum != -100)
@@ -1176,7 +1176,7 @@ namespace AdaptiveFEM.MagicalSolver
             if (I == J)
             {
                 // 1st, we should check $I == J$ case. 
-                foreach (int trngNum in node.neighborTriangles)
+                foreach (int trngNum in node.NeighborTriangles)
                 {
                     // For this case, for each triangle, we should find I-th node place in trng.Nodes
                     if (trngNum != -100)
@@ -1213,7 +1213,7 @@ namespace AdaptiveFEM.MagicalSolver
                 int trngNum1 = -100;
                 int trngNum2 = -100;
                 // if IsNeighbor == true, then there are two triangles containing both I ang J. 
-                foreach (int trngNum in node.neighborTriangles)
+                foreach (int trngNum in node.NeighborTriangles)
                 {
                     // For this case, for each triangle, we should find I-th node place in trng.Nodes
                     if (trngNum != -100)
@@ -1335,7 +1335,7 @@ namespace AdaptiveFEM.MagicalSolver
         public List<double> nodeCoeff(int nodeIndex)
         {
             PointStar node = this.PointStars[nodeIndex];
-            for (int i = 0; i < node.neighborTriangles.Count; i++)
+            for (int i = 0; i < node.NeighborTriangles.Count; i++)
             {
 
             }
@@ -1380,12 +1380,12 @@ namespace AdaptiveFEM.MagicalSolver
             double A = elementArea(trngIndex);
             var elemT = new List<double>
             {
-                trng.epsilonR * A / 6,  // T11
-                trng.epsilonR * A / 12, // T12
-                trng.epsilonR * A / 12, // T13
-                trng.epsilonR * A / 6,  // T22
-                trng.epsilonR * A / 12, // T23
-                trng.epsilonR * A /6   // T33
+                trng.EpsilonR * A / 6,  // T11
+                trng.EpsilonR * A / 12, // T12
+                trng.EpsilonR * A / 12, // T13
+                trng.EpsilonR * A / 6,  // T22
+                trng.EpsilonR * A / 12, // T23
+                trng.EpsilonR * A /6   // T33
             };
             // $T^{(e)}_{ij}$ in this order: 11 12 13 22 23 33. $T^{(e)}_{ij} = T^{(e)}_{ji}$
             return elemT;
@@ -1402,7 +1402,7 @@ namespace AdaptiveFEM.MagicalSolver
             if (I == J)
             {
                 // 1st, we should check $I == J$ case. 
-                foreach (int trngNum in node.neighborTriangles)
+                foreach (int trngNum in node.NeighborTriangles)
                 {
                     // For this case, for each triangle, we should find I-th node place in trng.Nodes
                     if (trngNum != -100)
@@ -1439,7 +1439,7 @@ namespace AdaptiveFEM.MagicalSolver
                 int trngNum1 = -100;
                 int trngNum2 = -100;
                 // if IsNeighbor == true, then there are two triangles containing both I ang J. 
-                foreach (int trngNum in node.neighborTriangles)
+                foreach (int trngNum in node.NeighborTriangles)
                 {
                     // For this case, for each triangle, we should find I-th node place in trng.Nodes
                     if (trngNum != -100)
@@ -1562,7 +1562,7 @@ namespace AdaptiveFEM.MagicalSolver
             if (I == J)
             {
                 // 1st, we should check $I == J$ case. 
-                foreach (int trngNum in node.neighborTriangles)
+                foreach (int trngNum in node.NeighborTriangles)
                 {
                     // For this case, for each triangle, we should find I-th node place in trng.Nodes
                     if (trngNum != -100)
@@ -1599,7 +1599,7 @@ namespace AdaptiveFEM.MagicalSolver
                 int trngNum1 = -100;
                 int trngNum2 = -100;
                 // if IsNeighbor == true, then there are two triangles containing both I ang J. 
-                foreach (int trngNum in node.neighborTriangles)
+                foreach (int trngNum in node.NeighborTriangles)
                 {
                     // For this case, for each triangle, we should find I-th node place in trng.Nodes
                     if (trngNum != -100)
@@ -1753,7 +1753,7 @@ namespace AdaptiveFEM.MagicalSolver
                         W += 0.25 * twoNodeCoeff(i, j) * PointStars[i].Phi * PointStars[j].Phi;
                     }
                 }*/
-                List<int> neighbs = new List<int>(PointStars[i].neighborTriangles);
+                List<int> neighbs = new List<int>(PointStars[i].NeighborTriangles);
                 List<int> nodeNeighbs = new List<int>();
                 foreach (int trngNum in neighbs)
                 {
@@ -1816,7 +1816,7 @@ namespace AdaptiveFEM.MagicalSolver
                     double Phi = (1 - w) * PointStars[I].Phi;
                     PointStar node = PointStars[I];
                     List<int> nodeNeighbors = new List<int>();
-                    foreach (int trngNum in node.neighborTriangles)
+                    foreach (int trngNum in node.NeighborTriangles)
                     {
                         // For this case, for each triangle, we should find I-th node place in trng.Nodes
                         if (trngNum != -100)
@@ -1888,7 +1888,7 @@ namespace AdaptiveFEM.MagicalSolver
                     double avX = 0;
                     double avY = 0;
                     double avPhi = 0;
-                    foreach (int trngNum in PointStars[i].neighborTriangles)
+                    foreach (int trngNum in PointStars[i].NeighborTriangles)
                     {
                         if (trngNum != -100)
                         {
@@ -1898,21 +1898,21 @@ namespace AdaptiveFEM.MagicalSolver
                             {
                                 I_place++;
                             }
-                            avX += PointStars[trng.Nodes[(I_place + 1) % 3]].MyPoint.X;
-                            avX += PointStars[trng.Nodes[(I_place + 2) % 3]].MyPoint.X;
-                            avY += PointStars[trng.Nodes[(I_place + 1) % 3]].MyPoint.Y;
-                            avY += PointStars[trng.Nodes[(I_place + 2) % 3]].MyPoint.Y;
+                            avX += PointStars[trng.Nodes[(I_place + 1) % 3]].Point.X;
+                            avX += PointStars[trng.Nodes[(I_place + 2) % 3]].Point.X;
+                            avY += PointStars[trng.Nodes[(I_place + 1) % 3]].Point.Y;
+                            avY += PointStars[trng.Nodes[(I_place + 2) % 3]].Point.Y;
                             avPhi += PointStars[trng.Nodes[(I_place + 1) % 3]].Phi;
                             avPhi += PointStars[trng.Nodes[(I_place + 2) % 3]].Phi;
                         }
                     }
-                    avX /= (2 * PointStars[i].neighborTriangles.Count);
-                    avY /= (2 * PointStars[i].neighborTriangles.Count);
-                    avPhi /= (2 * PointStars[i].neighborTriangles.Count);
+                    avX /= (2 * PointStars[i].NeighborTriangles.Count);
+                    avY /= (2 * PointStars[i].NeighborTriangles.Count);
+                    avPhi /= (2 * PointStars[i].NeighborTriangles.Count);
                     Point p = new Point();
                     p.X = avX;
                     p.Y = avY;
-                    PointStars[i].MyPoint = p;
+                    PointStars[i].Point = p;
                     PointStars[i].Phi = avPhi;
                 }
             }
@@ -1928,7 +1928,7 @@ namespace AdaptiveFEM.MagicalSolver
             List<int> fixNodes = new List<int>();
             for (int i = 0; i < PointStars.Count; i++)
             {
-                if (!PointStars[i].IsBoundary || PointStars[i].whichBoundary == -5)
+                if (!PointStars[i].IsBoundary || PointStars[i].WhichBoundary == -5)
                 {
                     freeNodes.Add(i);
                 }
@@ -1956,7 +1956,7 @@ namespace AdaptiveFEM.MagicalSolver
             for (int i = 0; i < freeNodes.Count; i++)
             {
                 b[i] = 0;
-                List<int> neighbs = new List<int>(PointStars[freeNodes[i]].neighborTriangles);
+                List<int> neighbs = new List<int>(PointStars[freeNodes[i]].NeighborTriangles);
                 List<int> nodeNeighbs = new List<int>();
                 foreach (int trngNum in neighbs)
                 {
@@ -2013,7 +2013,7 @@ namespace AdaptiveFEM.MagicalSolver
             List<int> constrainedNodes = new List<int>();
             for (int i = 0; i < PointStars.Count; i++)
             {
-                if (!PointStars[i].IsBoundary || PointStars[i].whichBoundary == -5 || PointStars[i].IsFixedCharge)
+                if (!PointStars[i].IsBoundary || PointStars[i].WhichBoundary == -5 || PointStars[i].IsFixedCharge)
                 {
                     freeNodes.Add(i);
                     if (PointStars[i].IsFixedCharge)
@@ -2056,7 +2056,7 @@ namespace AdaptiveFEM.MagicalSolver
                             List<int> e_stars = new List<int>();
                             for (int k = 0; k < constrainedNodes.Count; k++)
                             {
-                                List<int> neighbs = new List<int>(PointStars[constrainedNodes[k]].neighborTriangles);
+                                List<int> neighbs = new List<int>(PointStars[constrainedNodes[k]].NeighborTriangles);
                                 foreach (int trngNum in neighbs)
                                 {
                                     if (trngNum != -100)
@@ -2116,7 +2116,7 @@ namespace AdaptiveFEM.MagicalSolver
             for (int i = 0; i < freeNodes.Count; i++)
             {
                 b[i] = 0;
-                List<int> neighbs = new List<int>(PointStars[freeNodes[i]].neighborTriangles);
+                List<int> neighbs = new List<int>(PointStars[freeNodes[i]].NeighborTriangles);
                 List<int> nodeNeighbs = new List<int>();
                 foreach (int trngNum in neighbs)
                 {

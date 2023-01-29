@@ -47,12 +47,8 @@ namespace AdaptiveFEM.Stores
         private void AddUserDefinedMaterial(Material material)
         {
             foreach (Material existingMaterial in AllMaterials)
-            {
                 if (existingMaterial.Conflicts(material))
-                {
                     throw new MaterialConflictException(existingMaterial, material);
-                }
-            }
 
             _userDefinedMaterials.Add(material);
         }

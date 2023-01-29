@@ -19,7 +19,7 @@
             <DataTemplate DataType="{x:Type compprofvm:CircleProfileVM}">
                 <local:CircleProfile />
             </DataTemplate>
-            
+
             <DataTemplate DataType="{x:Type compprofvm:EllipseProfileVM}">
                 <local:EllipseProfile />
             </DataTemplate>
@@ -43,6 +43,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -53,11 +54,13 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Row="0"
+                        IsEnabled="{Binding IsNotDomain}"
                         Grid.Column="0"
                         Orientation="Vertical">
                 <TextBlock Text="Boundary type"
                            Style="{StaticResource InputLabel}" />
-                <ComboBox ItemsSource="{Binding BoundaryTypes}"
+                <ComboBox x:Name="BoundaryType_ComboBox"
+                          ItemsSource="{Binding BoundaryTypes}"
                           SelectedItem="{Binding SelectedBoundaryType}" />
             </StackPanel>
 
@@ -69,6 +72,32 @@
                            Style="{StaticResource InputLabel}" />
                 <ComboBox ItemsSource="{Binding Materials}"
                           SelectedItem="{Binding SelectedMaterial}" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="1"
+                        Grid.Column="0"
+                        IsEnabled="{Binding IsNotDomain}"
+                        Margin="0 5 0 0"
+                        Orientation="Vertical">
+                <TextBlock Text="Phi"
+                           Style="{StaticResource InputLabel}" />
+                <TextBox Text="{Binding Phi}">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Setter Property="IsEnabled"
+                                    Value="False" />
+                            <Setter Property="Padding"
+                                    Value="2" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=BoundaryType_ComboBox, Path=SelectedIndex}"
+                                             Value="1">
+                                    <Setter Property="IsEnabled"
+                                            Value="True" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
             </StackPanel>
         </Grid>
         <!--#endregion-->

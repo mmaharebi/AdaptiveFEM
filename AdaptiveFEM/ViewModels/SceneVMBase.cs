@@ -1,6 +1,7 @@
 ﻿using AdaptiveFEM.Commands;
 using AdaptiveFEM.Commands.ViewerCommands;
 using AdaptiveFEM.Models;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 
@@ -41,6 +42,7 @@ namespace AdaptiveFEM.ViewModels
             Zoom = new Zoom(OnZoom, ResetZoom);
             ButtonTranslate = new ButtonTranslate(OnTranslate);
         }
+
 
         protected virtual void OnViewLoaded(double viewWidth, double viewHeight)
         {

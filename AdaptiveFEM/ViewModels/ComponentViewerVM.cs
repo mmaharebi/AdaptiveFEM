@@ -13,6 +13,7 @@ namespace AdaptiveFEM.ViewModels
         {
             Items = new ObservableCollection<Component>();
             design.ComponentAdded += OnComponentAdded;
+            design.DesignReset += OnDesignReset;
         }
 
         private void OnComponentAdded(object? sender, Component e)
@@ -30,6 +31,14 @@ namespace AdaptiveFEM.ViewModels
 
             Items.Insert(index, e);
 
+        }
+
+        private void OnDesignReset(object? sender, System.EventArgs e)
+        {
+            Items = new ObservableCollection<Component>(Items
+                .Reverse<Component>().Take(3));
+
+            OnPropertyChanged(nameof(Items));
         }
     }
 }
