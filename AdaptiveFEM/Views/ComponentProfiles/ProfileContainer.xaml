@@ -76,7 +76,7 @@
 
             <StackPanel Grid.Row="1"
                         Grid.Column="0"
-                        IsEnabled="{Binding IsNotDomain}"
+                        IsEnabled="{Binding IsPhiAssignmentAllowed}"
                         Margin="0 5 0 0"
                         Orientation="Vertical">
                 <TextBlock Text="Phi"

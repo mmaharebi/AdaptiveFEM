@@ -33,6 +33,10 @@ namespace AdaptiveFEM.ViewModels.ComponentProfiles
 
         public bool IsNotDomain { get; }
 
+        public bool IsPhiAssignmentAllowed => IsNotDomain &&
+            ((SelectedBoundaryType == BoundaryType.PerfectElectricConductor) ||
+            (SelectedMaterial.Name == "Perfect Electric Conductor"));
+
         public string WindowTitle => $"{ComponentType}: {ShapeType}";
 
         #region Boundary type
@@ -45,21 +49,9 @@ namespace AdaptiveFEM.ViewModels.ComponentProfiles
             {
                 _selectedBoundaryType = value;
                 OnPropertyChanged(nameof(SelectedBoundaryType));
+                OnPropertyChanged(nameof(IsPhiAssignmentAllowed));
             }
         }
-
-        private double _phi;
-
-        public double Phi
-        {
-            get => _phi;
-            set
-            {
-                _phi = value;
-                OnPropertyChanged(nameof(Phi));
-            }
-        }
-
 
         public List<BoundaryType> BoundaryTypes
         {
@@ -76,6 +68,18 @@ namespace AdaptiveFEM.ViewModels.ComponentProfiles
         }
         #endregion
 
+        private double _phi;
+
+        public double Phi
+        {
+            get => _phi;
+            set
+            {
+                _phi = value;
+                OnPropertyChanged(nameof(Phi));
+            }
+        }
+        
         #region Material
         private Material _selectedMaterial;
 
@@ -86,6 +90,7 @@ namespace AdaptiveFEM.ViewModels.ComponentProfiles
             {
                 _selectedMaterial = value;
                 OnPropertyChanged(nameof(SelectedMaterial));
+                OnPropertyChanged(nameof(IsPhiAssignmentAllowed));
             }
         }
 

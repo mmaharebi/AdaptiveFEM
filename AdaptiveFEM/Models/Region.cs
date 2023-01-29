@@ -11,7 +11,8 @@ namespace AdaptiveFEM.Models
 
         public override double StrokeThickness => 1;
 
-        public override Brush Fill => Brushes.LightSeaGreen;
+        public override Brush Fill =>
+            new SolidColorBrush(Color.FromArgb(100, 144, 238, 144));
 
         public Region(Geometry geometry,
             BoundaryType boundaryType,

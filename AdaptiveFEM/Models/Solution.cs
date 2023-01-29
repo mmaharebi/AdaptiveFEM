@@ -120,7 +120,7 @@ namespace AdaptiveFEM.Models
             };
             #endregion
 
-            // Triangulation
+            #region Triangulation
             Triangle trng0 = new Triangle
             {
                 IndexInList = 0,
@@ -134,12 +134,13 @@ namespace AdaptiveFEM.Models
                 Nodes = new List<int> { 0, 2, 3 },
                 Neighbors = new List<int> { -100, -100, 0 },
             };
+            #endregion
 
             MagicalSolver.Mesh mesh =
                 new MagicalSolver.Mesh(new List<PointStar> { P0, P1, P2, P3 },
                 new List<Triangle> { trng0, trng1 });
 
-            // Add region samples to mesh
+            #region Add regions
             foreach (Region region in _design.Model.Regions)
             {
                 bool regionIsComponent = region.Name.Split('-')[0] == "Component";
@@ -166,11 +167,14 @@ namespace AdaptiveFEM.Models
                     }
                 }
             }
+            #endregion
 
             #region Check zone
-            List<int> PECBoundaryIndices = _design.Model.Regions
-                .Where(r => r.Material.Name == "Perfect Electric Conductor")
+            List<int> PECIndices = _design.Model.Regions
+                .Where(r => (r.Material.Name == "Perfect Electric Conductor") ||
+                (r.BoundaryType == BoundaryType.PerfectElectricConductor))
                 .Select(r => r.LayerIndex).ToList();
+
 
             foreach (Triangle triangle in mesh.Triangles)
             {
@@ -181,11 +185,11 @@ namespace AdaptiveFEM.Models
                     (triangle.Nodes[2] == 0) || (triangle.Nodes[2] == 1) ||
                     (triangle.Nodes[2] == 2) || (triangle.Nodes[2] == 3);
 
-                bool isInPECMaterial = PECBoundaryIndices
+                bool isInPECMaterial = PECIndices
                     .Contains(mesh.PointStars[triangle.Nodes[0]].WhichBoundary) &&
-                    PECBoundaryIndices
+                    PECIndices
                     .Contains(mesh.PointStars[triangle.Nodes[1]].WhichBoundary) &&
-                    PECBoundaryIndices
+                    PECIndices
                     .Contains(mesh.PointStars[triangle.Nodes[2]].WhichBoundary);
 
 
@@ -246,8 +250,30 @@ namespace AdaptiveFEM.Models
             });
             OnMeshPointsUpdated();
             #endregion
+
+            #region Get potential data
+            double[,] potentialPhi = GetPotential(rectangle, mesh);
+
+
+            #endregion
+
+            #region Export potential
+            #endregion
         }
 
+        private double[,] GetPotential(RectangleGeometry rectangle, MagicalSolver.Mesh mesh)
+        {
+            double width = rectangle.Rect.Width;
+            double height = rectangle.Rect.Height;
+
+            double ds = 2 * (width + height) / unifomSamplesSize;
+            int xSize = Convert.ToInt32(Math.Ceiling(width / ds));
+            int ySize = Convert.ToInt32(Math.Ceiling(height / ds));
+
+            double[,] potential = new double[xSize, ySize];
+
+            return potential;
+        }
 
         private void PhiOnMeshGrid(int NumX, int NumY, MagicalSolver.Mesh mesh, out double[,] Phi)
         {
