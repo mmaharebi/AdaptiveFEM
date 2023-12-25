@@ -1,4 +1,5 @@
-﻿<Window x:Class="AdaptiveFEM.Views.ComponentProfiles.ProfileContainer"
+﻿
+    <Window x:Class="AdaptiveFEM.Views.ComponentProfiles.ProfileContainer"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -71,12 +72,12 @@
                 <TextBlock Text="Material"
                            Style="{StaticResource InputLabel}" />
                 <ComboBox ItemsSource="{Binding Materials}"
+                          DisplayMemberPath="Name"
                           SelectedItem="{Binding SelectedMaterial}" />
             </StackPanel>
 
             <StackPanel Grid.Row="1"
                         Grid.Column="0"
-                        IsEnabled="{Binding IsPhiAssignmentAllowed}"
                         Margin="0 5 0 0"
                         Orientation="Vertical">
                 <TextBlock Text="Phi"
@@ -85,16 +86,9 @@
                     <TextBox.Style>
                         <Style TargetType="TextBox">
                             <Setter Property="IsEnabled"
-                                    Value="False" />
+                                    Value="{Binding IsPhiAssignmentAllowed}" />
                             <Setter Property="Padding"
                                     Value="2" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ElementName=BoundaryType_ComboBox, Path=SelectedIndex}"
-                                             Value="1">
-                                    <Setter Property="IsEnabled"
-                                            Value="True" />
-                                </DataTrigger>
-                            </Style.Triggers>
                         </Style>
                     </TextBox.Style>
                 </TextBox>

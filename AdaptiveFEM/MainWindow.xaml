@@ -29,6 +29,13 @@
                     </Border>
                 </TabItem>
 
+                <TabItem Header="Chart">
+                    <Border BorderThickness="0.1"
+                            BorderBrush="DarkBlue">
+                        <views:Chart DataContext="{Binding ChartVM}" />
+                    </Border>
+                </TabItem>
+                
             </TabControl>
         </DockPanel>
     </Grid>

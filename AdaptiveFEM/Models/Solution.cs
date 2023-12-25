@@ -1,12 +1,11 @@
 ﻿using AdaptiveFEM.MagicalSolver;
+using AdaptiveFEM.Models.Materials;
 using NumSharp;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using System.Xml.Linq;
 
 namespace AdaptiveFEM.Models
 {
@@ -19,22 +18,34 @@ namespace AdaptiveFEM.Models
     {
         public List<List<Point>> MeshPoints { get; private set; }
 
-        //public List<Dictionary<int, Point>> IndexedMeshPoints { get; private set; }
+        public Dictionary<Point, double> Potential { get; private set; }
+
+        public bool IsPotentialValid { get; private set; }
+
+        public int PotentialXSize => 97;
+
+        public int PotentialYSize => 59;
 
         public event EventHandler<List<List<Point>>>? MeshPointsUpdated;
 
-        const int unifomSamplesSize = 43;
+        public event EventHandler? SolutionChanged;
+
+        const int unifomSamplesSize = 23;
 
         private readonly Design _design;
 
         public Solution(Design design)
         {
             MeshPoints = new List<List<Point>>();
+            Potential = new Dictionary<Point, double>();
+            IsPotentialValid = false;
             _design = design;
 
             //
+            _design.DesignChanged += OnDesignChanged;
             _design.DesignReset += OnDesignReset;
         }
+
 
         /// <summary>
         /// <warning>
@@ -49,7 +60,11 @@ namespace AdaptiveFEM.Models
                 throw new System
                     .MissingMemberException(nameof(_design.Model.Domain));
 
+            OnSolutionChanged();
+
             MeshPoints = new List<List<Point>>();
+            Potential = new Dictionary<Point, double>();
+            IsPotentialValid = false;
 
             // Four essential points of outer box
             Point p0, p1, p2, p3;
@@ -169,13 +184,14 @@ namespace AdaptiveFEM.Models
             }
             #endregion
 
-            #region Check zone
+            #region Material assignment
             List<int> PECIndices = _design.Model.Regions
-                .Where(r => (r.Material.Name == "Perfect Electric Conductor") ||
-                (r.BoundaryType == BoundaryType.PerfectElectricConductor))
+                .Where(r => r.BoundaryType == BoundaryType.PerfectElectricConductor ||
+                r.Material.MaterialType == MaterialType.PerfectElectricConductor)
                 .Select(r => r.LayerIndex).ToList();
 
 
+            int inequalBoundaries = 0;
             foreach (Triangle triangle in mesh.Triangles)
             {
                 bool isDomainTriangle = (triangle.Nodes[0] == 0) || (triangle.Nodes[0] == 1) ||
@@ -185,19 +201,34 @@ namespace AdaptiveFEM.Models
                     (triangle.Nodes[2] == 0) || (triangle.Nodes[2] == 1) ||
                     (triangle.Nodes[2] == 2) || (triangle.Nodes[2] == 3);
 
-                bool isInPECMaterial = PECIndices
-                    .Contains(mesh.PointStars[triangle.Nodes[0]].WhichBoundary) &&
-                    PECIndices
-                    .Contains(mesh.PointStars[triangle.Nodes[1]].WhichBoundary) &&
-                    PECIndices
-                    .Contains(mesh.PointStars[triangle.Nodes[2]].WhichBoundary);
+
+                foreach (int index in PECIndices)
+                {
+                    if ((mesh.PointStars[triangle.Nodes[0]].WhichBoundary == index) &&
+                        (mesh.PointStars[triangle.Nodes[1]].WhichBoundary == index) &&
+                        (mesh.PointStars[triangle.Nodes[2]].WhichBoundary == index))
+                        triangle.IsPEC = true;
+                }
+
+                int boundayIndex0 = mesh.PointStars[triangle.Nodes[0]].WhichBoundary;
+                int boundayIndex1 = mesh.PointStars[triangle.Nodes[1]].WhichBoundary;
+                int boundayIndex2 = mesh.PointStars[triangle.Nodes[2]].WhichBoundary;
 
 
-
-
-                if (isDomainTriangle || isInPECMaterial)
-                    triangle.IsPEC = true;
+                bool inequalIndices = !((boundayIndex0 == boundayIndex1) && (boundayIndex1 == boundayIndex2));
+                if (inequalIndices)
+                {
+                    // First problem: this scope is reached.
+                    inequalBoundaries++;
+                }
+                else if (boundayIndex0 < _design.Model.Regions.Count)
+                {
+                    // Second problem: this scope is never reached.
+                    triangle.EpsilonR = (float)_design.Model.Regions[boundayIndex0].Material.RelativePermittivity;
+                    triangle.MuR = (float)_design.Model.Regions[boundayIndex0].Material.RelativePermeability;
+                }
             }
+            MessageBox.Show(inequalBoundaries.ToString(), mesh.Triangles.Count.ToString());
             #endregion
 
             // Actual solve region
@@ -252,25 +283,142 @@ namespace AdaptiveFEM.Models
             #endregion
 
             #region Get potential data
-            double[,] potentialPhi = GetPotential(rectangle, mesh);
+            //double[,] potentialPhi = GetPotential(rectangle, mesh);
+            //Potential = GetPotential(rectangle, mesh, PotentialXSize, PotentialYSize);
+            //IsPotentialValid = true;
 
-
-            #endregion
-
-            #region Export potential
+            OnSolutionChanged();
             #endregion
         }
 
-        private double[,] GetPotential(RectangleGeometry rectangle, MagicalSolver.Mesh mesh)
+        private Dictionary<Point, double> GetPotential(RectangleGeometry rectangle, MagicalSolver.Mesh mesh, int potentialXSize, int potentialYSize)
         {
+            Dictionary<Point, double> potential = new Dictionary<Point, double>();
+
+            Point topLeft = rectangle.Rect.TopLeft;
+
             double width = rectangle.Rect.Width;
             double height = rectangle.Rect.Height;
 
-            double ds = 2 * (width + height) / unifomSamplesSize;
-            int xSize = Convert.ToInt32(Math.Ceiling(width / ds));
-            int ySize = Convert.ToInt32(Math.Ceiling(height / ds));
+            // Steps in each direction
+            double dx = 2 * (width + height) / potentialXSize;
+            double dy = 2 * (width + height) / potentialYSize;
+
+            for (int i = 0; i < potentialXSize; i++)
+            {
+                for (int j = 0; j < potentialYSize; j++)
+                {
+                    Point point = topLeft + new Vector(i * dx, j * dy);
+                    PointStar newNode = new PointStar
+                    {
+                        Point = point,
+                        NeighborTriangles = new List<int>(),
+                        IsBoundary = true,
+                        WhichBoundary = 1,
+                        IsOuter = false,
+                        Phi = 0,
+                    };
+
+                    Triangle triangle = new Triangle(mesh.WalkSearch(1, newNode));
+                    double Area = mesh.ElementArea(triangle.IndexInList);
+
+                    double X1 = mesh.PointStars[triangle.Nodes[0]].Point.X;
+                    double X2 = mesh.PointStars[triangle.Nodes[1]].Point.X;
+                    double X3 = mesh.PointStars[triangle.Nodes[2]].Point.X;
+                    double Y1 = mesh.PointStars[triangle.Nodes[0]].Point.Y;
+                    double Y2 = mesh.PointStars[triangle.Nodes[1]].Point.Y;
+                    double Y3 = mesh.PointStars[triangle.Nodes[2]].Point.Y;
+
+                    double alpha1 = (X2 * Y3 - X3 * Y2 + (Y2 - Y3) * point.X + (X3 - X2) * point.Y) / (2 * Area);
+                    double alpha2 = (X3 * Y1 - X1 * Y3 + (Y3 - Y1) * point.X + (X1 - X3) * point.Y) / (2 * Area);
+                    double alpha3 = (X1 * Y2 - X2 * Y1 + (Y1 - Y2) * point.X + (X2 - X1) * point.Y) / (2 * Area);
+
+                    double phi1 = mesh.PointStars[triangle.Nodes[0]].Phi;
+                    double phi2 = mesh.PointStars[triangle.Nodes[1]].Phi;
+                    double phi3 = mesh.PointStars[triangle.Nodes[2]].Phi;
+
+                    double partialPotential = alpha1 * phi1 + alpha2 * phi2 + alpha3 * phi3;
+
+                    List<int> outerBoxNodes = new List<int> { 0, 1, 2, 3 };
+
+                    bool isPartOfOuterBox = outerBoxNodes.Intersect(triangle.Nodes).Count() > 0;
+
+                    if (isPartOfOuterBox)
+                        partialPotential = 0;
+
+                    potential.Add(point, partialPotential);
+                }
+            }
+
+            return potential;
+        }
+
+        /// <summary>
+        /// Calculates the scalar potential within the domain
+        /// </summary>
+        /// <param name="rectangle"></param>
+        /// <param name="mesh"></param>
+        /// <returns>potential</returns>
+        private double[,] GetPotential(RectangleGeometry rectangle, MagicalSolver.Mesh mesh)
+        {
+            Point topLeft = rectangle.Rect.TopLeft;
+
+            double width = rectangle.Rect.Width;
+            double height = rectangle.Rect.Height;
+
+            // Steps in each direction
+            double dx = 2 * (width + height) / unifomSamplesSize;
+            double dy = 2 * (width + height) / unifomSamplesSize;
+
+            // Size of array
+            int xSize = Convert.ToInt32(Math.Ceiling(width / dx));
+            int ySize = Convert.ToInt32(Math.Ceiling(height / dy));
 
             double[,] potential = new double[xSize, ySize];
+
+            for (int i = 0; i < xSize; i++)
+            {
+                for (int j = 0; j < ySize; j++)
+                {
+                    Point point = topLeft + new Vector(i * dx, j * dy);
+                    PointStar newNode = new PointStar
+                    {
+                        Point = point,
+                        NeighborTriangles = new List<int>(),
+                        IsBoundary = true,
+                        WhichBoundary = 1,
+                        IsOuter = false,
+                        Phi = 0,
+                    };
+
+                    Triangle triangle = new Triangle(mesh.WalkSearch(1, newNode));
+                    double Area = mesh.ElementArea(triangle.IndexInList);
+
+                    double X1 = mesh.PointStars[triangle.Nodes[0]].Point.X;
+                    double X2 = mesh.PointStars[triangle.Nodes[1]].Point.X;
+                    double X3 = mesh.PointStars[triangle.Nodes[2]].Point.X;
+                    double Y1 = mesh.PointStars[triangle.Nodes[0]].Point.Y;
+                    double Y2 = mesh.PointStars[triangle.Nodes[1]].Point.Y;
+                    double Y3 = mesh.PointStars[triangle.Nodes[2]].Point.Y;
+
+                    double alpha1 = (X2 * Y3 - X3 * Y2 + (Y2 - Y3) * point.X + (X3 - X2) * point.Y) / (2 * Area);
+                    double alpha2 = (X3 * Y1 - X1 * Y3 + (Y3 - Y1) * point.X + (X1 - X3) * point.Y) / (2 * Area);
+                    double alpha3 = (X1 * Y2 - X2 * Y1 + (Y1 - Y2) * point.X + (X2 - X1) * point.Y) / (2 * Area);
+
+                    double phi1 = mesh.PointStars[triangle.Nodes[0]].Phi;
+                    double phi2 = mesh.PointStars[triangle.Nodes[1]].Phi;
+                    double phi3 = mesh.PointStars[triangle.Nodes[2]].Phi;
+
+                    potential[i, j] = alpha1 * phi1 + alpha2 * phi2 + alpha3 * phi3;
+
+                    List<int> outerBoxNodes = new List<int> { 0, 1, 2, 3 };
+
+                    bool isPartOfOuterBox = outerBoxNodes.Intersect(triangle.Nodes).Count() > 0;
+
+                    if (isPartOfOuterBox)
+                        potential[i, j] = 0;
+                }
+            }
 
             return potential;
         }
@@ -296,8 +444,8 @@ namespace AdaptiveFEM.Models
                     newNode.WhichBoundary = 1;
                     newNode.IsOuter = false;
                     newNode.Phi = 0;
-                    Triangle trng = new Triangle(mesh.walkSearch(1, newNode));
-                    double A = mesh.elementArea(trng.IndexInList);
+                    Triangle trng = new Triangle(mesh.WalkSearch(1, newNode));
+                    double A = mesh.ElementArea(trng.IndexInList);
                     double X1 = mesh.PointStars[trng.Nodes[0]].Point.X;
                     double X2 = mesh.PointStars[trng.Nodes[1]].Point.X;
                     double X3 = mesh.PointStars[trng.Nodes[2]].Point.X;
@@ -394,6 +542,18 @@ namespace AdaptiveFEM.Models
             MeshPointsUpdated?.Invoke(this, MeshPoints);
         }
 
+        private void OnSolutionChanged()
+        {
+            SolutionChanged?.Invoke(this, new EventArgs());
+        }
+
+        private void OnDesignChanged(object? sender, EventArgs e)
+        {
+            MeshPoints.Clear();
+            Potential.Clear();
+            IsPotentialValid = false;
+        }
+
         private void OnDesignReset(object? sender, System.EventArgs e)
         {
             ResetMesh();
@@ -401,7 +561,9 @@ namespace AdaptiveFEM.Models
 
         private void ResetMesh()
         {
-            MeshPoints = new List<List<Point>>();
+            MeshPoints.Clear();
+            Potential.Clear();
+            IsPotentialValid = false;
         }
     }
 }

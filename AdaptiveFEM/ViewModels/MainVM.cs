@@ -42,6 +42,19 @@ namespace AdaptiveFEM.ViewModels
             }
         }
 
+        private ViewModelBase _chartVM;
+
+        public ViewModelBase ChartVM
+        {
+            get => _chartVM;
+            set
+            {
+                _chartVM = value;
+                OnPropertyChanged(nameof(ChartVM));
+            }
+        }
+
+
         private readonly Design _design;
 
         private readonly MessageService _messageService;
@@ -53,9 +66,10 @@ namespace AdaptiveFEM.ViewModels
             _design = design;
             _messageService = messageService;
 
-            _toolbarVM = new ToolbarVM(design, materialStore, messageService);
+            _toolbarVM = new ToolbarVM(design, materialStore, messageService, this);
             _componentViewerVM = new ComponentViewerVM(design);
             _meshVM = new MeshVM(design);
+            _chartVM = new ChartVM();
         }
     }
 }

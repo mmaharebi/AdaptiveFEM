@@ -63,7 +63,7 @@ namespace AdaptiveFEM.MagicalSolver
         //////////////////////
         //// Calculation of the area of a triangle with index trngIndex in the list.
         /////////////////////
-        public double elementArea(int trngIndex)
+        public double ElementArea(int trngIndex)
         {
             Triangle trng = this.Triangles[trngIndex];
             double X1 = PointStars[trng.Nodes[0]].Point.X;
@@ -78,7 +78,7 @@ namespace AdaptiveFEM.MagicalSolver
         ////////////////////////////////
         /// this function find the triangle which contain a particular node using the presented method in the THESIS
         ////////////////////////////////
-        public Triangle walkSearch(int lastTriangleNum, PointStar newNode)
+        public Triangle WalkSearch(int lastTriangleNum, PointStar newNode)
         {
             Triangle trng = new Triangle();
             //////////////////////////////////
@@ -378,7 +378,7 @@ namespace AdaptiveFEM.MagicalSolver
             // This function add a new node to the mesh, without any swapping or epsilon_r considerations. 
             PointStar lastNode = this.PointStars[PointStars.Count - 1];
             // First step: Finding the triangle that the node is in it. 
-            Triangle inTriangle = new Triangle(walkSearch(last, newNode));
+            Triangle inTriangle = new Triangle(WalkSearch(last, newNode));
             int lastTriangle = inTriangle.IndexInList;
             //MessageBox.Show(lastTriangle.ToString());
             // Second step: Creating two new triangles 
@@ -561,7 +561,7 @@ namespace AdaptiveFEM.MagicalSolver
             for (int trngIndex = 0; trngIndex < Num; trngIndex++)
             {
                 double dPhi = maxPhi - minPhi;
-                double A = elementArea(trngIndex);
+                double A = ElementArea(trngIndex);
                 bool IsOuter = Triangles[trngIndex].Nodes.Contains(0) || Triangles[trngIndex].Nodes.Contains(1) ||
                     Triangles[trngIndex].Nodes.Contains(2) || Triangles[trngIndex].Nodes.Contains(3);
                 double[] grad = new double[3]
@@ -1355,7 +1355,7 @@ namespace AdaptiveFEM.MagicalSolver
             double Y1 = PointStars[0].MyPoint.Y;
             double Y2 = PointStars[1].MyPoint.Y;
             double Y3 = PointStars[2].MyPoint.Y;*/
-            double A = elementArea(trngIndex);
+            double A = ElementArea(trngIndex);
             var elemT = new List<double>
             {
                 A/6,  // T11
@@ -1377,7 +1377,7 @@ namespace AdaptiveFEM.MagicalSolver
             double Y1 = PointStars[0].MyPoint.Y;
             double Y2 = PointStars[1].MyPoint.Y;
             double Y3 = PointStars[2].MyPoint.Y;*/
-            double A = elementArea(trngIndex);
+            double A = ElementArea(trngIndex);
             var elemT = new List<double>
             {
                 trng.EpsilonR * A / 6,  // T11

@@ -35,7 +35,7 @@ namespace AdaptiveFEM.ViewModels.ComponentProfiles
 
         public bool IsPhiAssignmentAllowed => IsNotDomain &&
             ((SelectedBoundaryType == BoundaryType.PerfectElectricConductor) ||
-            (SelectedMaterial.Name == "Perfect Electric Conductor"));
+            (SelectedMaterial.MaterialType == MaterialType.PerfectElectricConductor));
 
         public string WindowTitle => $"{ComponentType}: {ShapeType}";
 
