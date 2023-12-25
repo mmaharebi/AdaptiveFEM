@@ -19,7 +19,7 @@ To install the project, follow these steps:
 
 ## Contributing
 
-Contributions are welcome! Please read the contributing guidelines before making any changes.
+Your contributions are highly valued and encouraged! If you have any questions or suggestions, please feel absolutely free to share them. Your insights and ideas play a crucial role in enhancing and refining this project. Let's collaborate and make this endeavor even better together!
 
 ## License
 
